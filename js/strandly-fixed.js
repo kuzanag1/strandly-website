@@ -1,12 +1,10 @@
-// URGENT QUIZ FIX - Navigation Issues
-// February 17, 2026
+// EMERGENCY NAVIGATION FIX - February 17, 2026
+// CAPTAIN'S URGENT REQUIREMENTS: Perfect navigation + no images + clean UX
 
-// Enhanced StrandlyQuiz class with fixed navigation
 class FixedStrandlyQuiz {
     constructor() {
         this.currentQuestion = 0;
         this.answers = {};
-        this.autoAdvanceTimer = null;
         this.questions = [
             {
                 id: 'concern',
@@ -45,13 +43,11 @@ class FixedStrandlyQuiz {
                 id: 'texture',
                 question: "Which best describes your hair texture?",
                 type: 'single',
-                visual: true,
-                cssClass: 'question-texture-circles',
                 options: [
-                    { value: 'straight', text: 'Straight', description: 'Lies flat against scalp', image: 'images/hair-circle-straight.png' },
-                    { value: 'wavy', text: 'Wavy', description: 'Gentle waves and slight bend', image: 'images/hair-circle-wavy.png' },
-                    { value: 'curly', text: 'Curly', description: 'Defined curls and spirals', image: 'images/hair-circle-curly.png' },
-                    { value: 'coily', text: 'Coily', description: 'Tight coils and kinks', image: 'images/hair-circle-coily.png' }
+                    { value: 'straight', text: 'Straight - lies flat against scalp, minimal wave or curl' },
+                    { value: 'wavy', text: 'Wavy - gentle waves with slight bends, not quite curly' },
+                    { value: 'curly', text: 'Curly - defined curls and spirals, springy texture' },
+                    { value: 'coily', text: 'Coily - tight coils and kinks, very textured' }
                 ]
             },
             {
@@ -69,9 +65,9 @@ class FixedStrandlyQuiz {
                 question: "Hair Porosity Test: Drop a clean hair strand in water. What happens?",
                 type: 'single',
                 options: [
-                    { value: 'floats', text: 'It floats on top (Low porosity)' },
-                    { value: 'slow_sink', text: 'It slowly sinks (Normal porosity)' },
-                    { value: 'fast_sink', text: 'It sinks quickly (High porosity)' },
+                    { value: 'floats', text: 'It floats on top (Low porosity - hair repels moisture)' },
+                    { value: 'slow_sink', text: 'It slowly sinks (Normal porosity - balanced moisture)' },
+                    { value: 'fast_sink', text: 'It sinks quickly (High porosity - absorbs moisture fast)' },
                     { value: 'unsure', text: "I haven't tested this yet" }
                 ]
             },
@@ -80,10 +76,10 @@ class FixedStrandlyQuiz {
                 question: "How would you describe your scalp?",
                 type: 'single',
                 options: [
-                    { value: 'oily', text: 'Gets oily quickly' },
-                    { value: 'normal', text: 'Normal - not too oily or dry' },
-                    { value: 'dry', text: 'Dry or flaky' },
-                    { value: 'sensitive', text: 'Sensitive or irritated' }
+                    { value: 'oily', text: 'Gets oily quickly - greasy within 1-2 days' },
+                    { value: 'normal', text: 'Normal - balanced, not too oily or dry' },
+                    { value: 'dry', text: 'Dry or flaky - feels tight, may have dandruff' },
+                    { value: 'sensitive', text: 'Sensitive or irritated - reacts to products' }
                 ]
             },
             {
@@ -91,11 +87,11 @@ class FixedStrandlyQuiz {
                 question: "What chemical treatments have you had? (Select all that apply)",
                 type: 'multiple',
                 options: [
-                    { value: 'none', text: 'None' },
-                    { value: 'color', text: 'Hair coloring' },
-                    { value: 'bleach', text: 'Bleaching' },
-                    { value: 'perm', text: 'Perms or relaxers' },
-                    { value: 'highlights', text: 'Highlights' }
+                    { value: 'none', text: 'None - my hair is natural/untreated' },
+                    { value: 'color', text: 'Hair coloring or dye' },
+                    { value: 'bleach', text: 'Bleaching or lightening' },
+                    { value: 'perm', text: 'Perms or chemical relaxers' },
+                    { value: 'highlights', text: 'Highlights or lowlights' }
                 ]
             },
             {
@@ -103,10 +99,10 @@ class FixedStrandlyQuiz {
                 question: "What's your environment like?",
                 type: 'single',
                 options: [
-                    { value: 'humid', text: 'Humid climate' },
-                    { value: 'dry', text: 'Dry climate' },
-                    { value: 'moderate', text: 'Moderate climate' },
-                    { value: 'variable', text: 'Changes with seasons' }
+                    { value: 'humid', text: 'Humid climate - high moisture in air' },
+                    { value: 'dry', text: 'Dry climate - low humidity, arid conditions' },
+                    { value: 'moderate', text: 'Moderate climate - balanced humidity' },
+                    { value: 'variable', text: 'Changes with seasons - varies throughout year' }
                 ]
             },
             {
@@ -114,25 +110,60 @@ class FixedStrandlyQuiz {
                 question: "What's your main hair goal?",
                 type: 'single',
                 options: [
-                    { value: 'health', text: 'Healthier, stronger hair' },
-                    { value: 'growth', text: 'Faster hair growth' },
-                    { value: 'manageability', text: 'Easier to style and manage' },
-                    { value: 'shine', text: 'More shine and softness' },
-                    { value: 'volume', text: 'More volume and thickness' }
+                    { value: 'health', text: 'Healthier, stronger hair overall' },
+                    { value: 'growth', text: 'Faster hair growth and length retention' },
+                    { value: 'manageability', text: 'Easier to style and manage daily' },
+                    { value: 'shine', text: 'More shine, softness, and smoothness' },
+                    { value: 'volume', text: 'More volume and thickness appearance' }
                 ]
             }
         ];
     }
 
     start() {
+        // Initialize quiz state
         this.currentQuestion = 0;
         this.answers = {};
+        
+        // Set up navigation event listeners ONCE
+        this.setupNavigation();
+        
+        // Render first question
         this.renderQuestion();
+        
+        console.log('✅ Quiz started successfully');
+    }
+
+    setupNavigation() {
+        // Clear any existing listeners and set up clean navigation
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        
+        if (prevBtn) {
+            // Clone button to remove all existing listeners
+            const newPrevBtn = prevBtn.cloneNode(true);
+            prevBtn.parentNode.replaceChild(newPrevBtn, prevBtn);
+            
+            newPrevBtn.addEventListener('click', () => {
+                console.log('🔙 Previous button clicked');
+                this.previousQuestion();
+            });
+        }
+        
+        if (nextBtn) {
+            // Clone button to remove all existing listeners
+            const newNextBtn = nextBtn.cloneNode(true);
+            nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
+            
+            newNextBtn.addEventListener('click', () => {
+                console.log('➡️ Next button clicked');
+                this.nextQuestion();
+            });
+        }
     }
 
     renderQuestion() {
         const question = this.questions[this.currentQuestion];
-        const questionDisplay = document.getElementById('question-display');
         const questionText = document.getElementById('question-text');
         const questionOptions = document.getElementById('question-options');
         const questionCounter = document.getElementById('question-counter');
@@ -143,74 +174,28 @@ class FixedStrandlyQuiz {
         
         // Clear previous options
         questionOptions.innerHTML = '';
+        questionOptions.className = 'question-options';
         
-        // Apply question-specific CSS class
-        questionDisplay.className = 'question-display';
-        if (question.cssClass) {
-            questionDisplay.classList.add(question.cssClass);
-        }
-        
-        if (question.visual) {
-            this.renderVisualOptions(question, questionOptions);
-        } else {
-            this.renderTextOptions(question, questionOptions);
-        }
+        // Render options based on type
+        this.renderOptions(question, questionOptions);
         
         // Update progress bar
-        const progressFill = document.getElementById('progress-fill');
-        const progressPercent = ((this.currentQuestion + 1) / this.questions.length) * 100;
-        progressFill.style.width = `${progressPercent}%`;
+        this.updateProgress();
         
         // Update navigation buttons
-        const prevBtn = document.getElementById('prev-btn');
-        const nextBtn = document.getElementById('next-btn');
+        this.updateNavigation();
         
-        if (prevBtn) prevBtn.disabled = this.currentQuestion === 0;
-        if (nextBtn) nextBtn.style.display = this.currentQuestion === this.questions.length - 1 ? 'none' : 'inline-block';
-        
-        console.log(`Question ${this.currentQuestion + 1}: ${question.question}`);
+        console.log(`📝 Rendered question ${this.currentQuestion + 1}: ${question.question}`);
     }
     
-    renderVisualOptions(question, container) {
-        container.className = 'question-options visual-grid';
-        
+    renderOptions(question, container) {
         question.options.forEach(option => {
-            const optionDiv = document.createElement('div');
-            optionDiv.className = 'visual-option';
+            const optionDiv = document.createElement('button');
+            optionDiv.className = 'option-button';
             optionDiv.dataset.value = option.value;
+            optionDiv.textContent = option.text;
             
-            // Check if this option was previously selected
-            if (this.answers[question.id] === option.value) {
-                optionDiv.classList.add('selected');
-            }
-            
-            // Individual option images or shared reference image
-            const imageSrc = option.image || question.image;
-            optionDiv.innerHTML = `
-                <img src="${imageSrc}" alt="${option.text}" loading="lazy" class="option-image">
-                <div class="option-text">${option.text}</div>
-                <div class="option-description">${option.description || ''}</div>
-            `;
-            
-            optionDiv.addEventListener('click', () => {
-                this.selectOption(question.id, option.value, optionDiv);
-            });
-            
-            container.appendChild(optionDiv);
-        });
-    }
-    
-    renderTextOptions(question, container) {
-        container.className = 'question-options text-list';
-        
-        question.options.forEach(option => {
-            const optionDiv = document.createElement('div');
-            optionDiv.className = 'text-option';
-            
-            const inputType = question.type === 'multiple' ? 'checkbox' : 'radio';
-            const inputName = question.id;
-            
-            // Check if this option was previously selected
+            // Check if previously selected
             const isSelected = question.type === 'multiple' 
                 ? (this.answers[question.id] || []).includes(option.value)
                 : this.answers[question.id] === option.value;
@@ -219,97 +204,151 @@ class FixedStrandlyQuiz {
                 optionDiv.classList.add('selected');
             }
             
-            optionDiv.innerHTML = `
-                <input type="${inputType}" 
-                       name="${inputName}" 
-                       value="${option.value}" 
-                       id="${question.id}_${option.value}"
-                       ${isSelected ? 'checked' : ''}>
-                <label for="${question.id}_${option.value}">${option.text}</label>
-            `;
-            
+            // Add click handler
             optionDiv.addEventListener('click', () => {
-                const input = optionDiv.querySelector('input');
                 if (question.type === 'multiple') {
-                    input.checked = !input.checked;
-                    this.selectMultipleOption(question.id, option.value, input.checked);
+                    this.toggleMultipleOption(question.id, option.value, optionDiv);
                 } else {
-                    input.checked = true;
-                    this.selectOption(question.id, option.value, optionDiv);
+                    this.selectSingleOption(question.id, option.value, optionDiv, container);
                 }
+                this.updateNavigation();
             });
             
             container.appendChild(optionDiv);
         });
     }
     
-    selectOption(questionId, value, optionElement) {
-        // Clear any existing auto-advance timer
-        if (this.autoAdvanceTimer) {
-            clearTimeout(this.autoAdvanceTimer);
-        }
-        
-        // Store the answer
+    selectSingleOption(questionId, value, selectedElement, container) {
+        // Store answer
         this.answers[questionId] = value;
         
         // Update visual selection
-        const allOptions = optionElement.parentNode.querySelectorAll('.visual-option, .text-option');
-        allOptions.forEach(opt => opt.classList.remove('selected'));
-        optionElement.classList.add('selected');
+        container.querySelectorAll('.option-button').forEach(btn => {
+            btn.classList.remove('selected');
+        });
+        selectedElement.classList.add('selected');
         
-        // Enable next button
-        const nextBtn = document.getElementById('next-btn');
-        if (nextBtn) nextBtn.disabled = false;
-        
-        // REMOVED: Auto-advance functionality for better user control
-        // Users can now use Previous/Next buttons as needed
+        console.log(`✅ Selected: ${questionId} = ${value}`);
     }
     
-    selectMultipleOption(questionId, value, isSelected) {
+    toggleMultipleOption(questionId, value, optionElement) {
+        // Initialize array if needed
         if (!this.answers[questionId]) {
             this.answers[questionId] = [];
         }
         
-        if (isSelected && !this.answers[questionId].includes(value)) {
-            this.answers[questionId].push(value);
-        } else if (!isSelected) {
+        const isCurrentlySelected = this.answers[questionId].includes(value);
+        
+        if (isCurrentlySelected) {
+            // Remove selection
             this.answers[questionId] = this.answers[questionId].filter(v => v !== value);
+            optionElement.classList.remove('selected');
+            console.log(`❌ Deselected: ${questionId} -= ${value}`);
+        } else {
+            // Add selection
+            this.answers[questionId].push(value);
+            optionElement.classList.add('selected');
+            console.log(`✅ Selected: ${questionId} += ${value}`);
+        }
+    }
+    
+    updateProgress() {
+        const progressFill = document.getElementById('progress-fill');
+        if (progressFill) {
+            const progressPercent = ((this.currentQuestion + 1) / this.questions.length) * 100;
+            progressFill.style.width = `${progressPercent}%`;
+        }
+    }
+    
+    updateNavigation() {
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        
+        if (prevBtn) {
+            // Previous button: disabled only on first question
+            prevBtn.disabled = this.currentQuestion === 0;
+            prevBtn.style.display = 'inline-block';
+        }
+        
+        if (nextBtn) {
+            const currentQuestion = this.questions[this.currentQuestion];
+            const hasAnswer = this.hasValidAnswer(currentQuestion);
+            
+            if (this.currentQuestion === this.questions.length - 1) {
+                // Last question: show "Complete Quiz"
+                nextBtn.textContent = 'Complete Quiz';
+                nextBtn.disabled = !hasAnswer;
+            } else {
+                // Regular questions: show "Next"
+                nextBtn.textContent = 'Next';
+                nextBtn.disabled = !hasAnswer;
+            }
+            nextBtn.style.display = 'inline-block';
+        }
+    }
+    
+    hasValidAnswer(question) {
+        const answer = this.answers[question.id];
+        
+        if (question.type === 'multiple') {
+            return Array.isArray(answer) && answer.length > 0;
+        } else {
+            return answer !== undefined && answer !== null;
         }
     }
 
     nextQuestion() {
+        const currentQuestion = this.questions[this.currentQuestion];
+        
+        // Validate answer exists
+        if (!this.hasValidAnswer(currentQuestion)) {
+            console.warn('⚠️ No answer selected');
+            return;
+        }
+        
         if (this.currentQuestion < this.questions.length - 1) {
             this.currentQuestion++;
             this.renderQuestion();
+            console.log(`➡️ Advanced to question ${this.currentQuestion + 1}`);
         } else {
             this.submitQuiz();
         }
     }
 
     previousQuestion() {
-        // Clear any auto-advance timer
-        if (this.autoAdvanceTimer) {
-            clearTimeout(this.autoAdvanceTimer);
-        }
-        
         if (this.currentQuestion > 0) {
             this.currentQuestion--;
             this.renderQuestion();
+            console.log(`🔙 Went back to question ${this.currentQuestion + 1}`);
         }
     }
 
     submitQuiz() {
-        console.log('🧬 Submitting quiz answers:', this.answers);
+        console.log('🧬 Quiz completed! Final answers:', this.answers);
         
-        // Show completion message
-        document.getElementById('question-text').textContent = 
-            "Analyzing your hair profile...";
-        document.getElementById('question-options').innerHTML = 
-            '<div style="text-align: center; padding: 2rem;"><div style="font-size: 3rem;">🧬</div><p>Processing your personalized recommendations...</p></div>';
+        // Show completion state
+        const questionText = document.getElementById('question-text');
+        const questionOptions = document.getElementById('question-options');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
         
-        // Simulate processing time
+        questionText.textContent = "Analyzing your hair profile...";
+        questionOptions.innerHTML = `
+            <div style="text-align: center; padding: 3rem 2rem;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">🧬</div>
+                <h3 style="margin-bottom: 1rem; color: #495057;">Processing your personalized recommendations</h3>
+                <p style="color: #6c757d;">This will take just a moment...</p>
+            </div>
+        `;
+        
+        // Hide navigation
+        if (prevBtn) prevBtn.style.display = 'none';
+        if (nextBtn) nextBtn.style.display = 'none';
+        
+        // Simulate processing and redirect
         setTimeout(() => {
-            alert('Quiz completed! (Results page coming soon)');
+            alert('Quiz completed successfully! Redirecting to results...');
+            // In real implementation: window.location.href = 'results.html';
         }, 2000);
     }
 }
