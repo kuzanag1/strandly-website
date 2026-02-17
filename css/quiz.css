@@ -2,18 +2,11 @@
 .quiz-logo {
     display: flex;
     align-items: center;
-    gap: 8px;
 }
 
-.quiz-nav-logo {
-    height: 40px;
+.quiz-nav-logo-main {
+    height: 60px;
     width: auto;
-}
-
-.quiz-subtitle {
-    font-size: 12px;
-    color: #718096;
-    font-weight: 500;
 }
 
 /* Quiz-specific styles for visual questions */
