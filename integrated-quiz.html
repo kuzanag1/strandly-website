@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hair Analysis Quiz - Strandly</title>
+    <meta name="description" content="Discover your unique hair profile with our scientifically-backed hair analysis quiz. Get personalized product recommendations in just 3 minutes.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/quiz.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/loading.css">
+    
+    <!-- Stripe -->
+    <script src="https://js.stripe.com/v3/"></script>
+    
+    <!-- Preload critical JavaScript -->
+    <link rel="preload" href="js/api-service.js" as="script">
+    <link rel="preload" href="js/integrated-quiz.js" as="script">
+</head>
+<body>
+    <!-- Header -->
+    <header class="site-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html">
+                        <img src="images/strandly-logo.png" alt="Strandly" width="150" height="40">
+                    </a>
+                </div>
+                <nav class="auth-nav">
+                    <div class="unauthenticated-only">
+                        <a href="login.html" class="btn btn-outline">Login</a>
+                        <a href="signup.html" class="btn btn-primary">Sign Up</a>
+                    </div>
+                    <div class="authenticated-only" style="display: none;">
+                        <span class="user-greeting">Hi, <span class="user-name">User</span>!</span>
+                        <button class="logout-btn btn btn-outline">Logout</button>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Quiz Container -->
+    <main class="quiz-container">
+        <div class="container">
+            
+            <!-- Quiz Loading State -->
+            <div id="quiz-loading" class="quiz-loading hidden">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Loading quiz questions...</p>
+            </div>
+
+            <!-- Quiz Error State -->
+            <div id="quiz-error" class="quiz-error hidden">
+                <div class="error-icon">⚠️</div>
+                <p class="error-text">Failed to load quiz</p>
+                <button class="retry-btn btn btn-primary" onclick="window.integratedQuiz?.retryInitialization()">
+                    Retry
+                </button>
+            </div>
+
+            <!-- Quiz Header -->
+            <div class="quiz-header">
+                <h1>Hair Analysis Quiz</h1>
+                <p class="quiz-subtitle">Discover your unique hair profile and get personalized recommendations</p>
+                
+                <!-- Progress Bar -->
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <div id="question-counter" class="question-counter">1 of 10</div>
+                </div>
+            </div>
+
+            <!-- Quiz Content -->
+            <div class="quiz-content">
+                <div class="question-container">
+                    <h2 id="question-text" class="question-text">Loading question...</h2>
+                    <div id="question-options" class="question-options">
+                        <!-- Options will be dynamically generated -->
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="quiz-navigation">
+                    <button id="prev-btn" class="btn btn-secondary prev-btn" disabled>
+                        Previous
+                    </button>
+                    <button id="next-btn" class="btn btn-primary next-btn" disabled>
+                        Next
+                    </button>
+                </div>
+            </div>
+
+            <!-- Progress Indicator -->
+            <div class="quiz-progress-info">
+                <div class="progress-text">
+                    <span class="current-progress">Questions answered: <strong id="answered-count">0</strong></span>
+                    <span class="estimated-time">⏱️ 3-5 minutes remaining</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Authentication Prompt Modal (for non-authenticated users) -->
+    <div id="auth-prompt-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Save Your Results</h3>
+                <button class="modal-close" onclick="this.closest('.modal').classList.add('hidden')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Create a free account to save your personalized hair analysis and get:</p>
+                <ul>
+                    <li>✅ Personalized product recommendations</li>
+                    <li>✅ Track your hair journey over time</li>
+                    <li>✅ Updated advice based on seasonal changes</li>
+                    <li>✅ Exclusive hair care tips and trends</li>
+                </ul>
+                <div class="auth-actions">
+                    <a href="signup.html?redirect=quiz-complete" class="btn btn-primary">Create Account</a>
+                    <a href="login.html?redirect=quiz-complete" class="btn btn-outline">I Have Account</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Messages -->
+    <div id="auth-success" class="auth-success hidden">
+        <div class="success-content">
+            <div class="success-icon">✅</div>
+            <p class="success-text">Success!</p>
+        </div>
+    </div>
+
+    <!-- Payment Message -->
+    <div id="payment-message" class="payment-message hidden">
+        Payment processing...
+    </div>
+
+    <!-- Footer -->
+    <footer class="quiz-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="trust-indicators">
+                    <div class="trust-item">
+                        <span class="trust-icon">🔒</span>
+                        <span class="trust-text">Secure & Private</span>
+                    </div>
+                    <div class="trust-item">
+                        <span class="trust-icon">🧬</span>
+                        <span class="trust-text">Science-Based</span>
+                    </div>
+                    <div class="trust-item">
+                        <span class="trust-icon">⚡</span>
+                        <span class="trust-text">Instant Results</span>
+                    </div>
+                </div>
+                <p class="footer-text">
+                    Your privacy is important to us. Quiz results are encrypted and never shared without your permission.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Configuration
+        window.STRANDLY_CONFIG = {
+            api: {
+                baseUrl: window.location.hostname.includes('netlify') || window.location.hostname.includes('strandly') 
+                    ? 'https://strandly-backend.onrender.com/api'
+                    : 'http://localhost:3000/api'
+            },
+            stripe: {
+                publishableKey: window.location.hostname.includes('strandly') && !window.location.hostname.includes('netlify')
+                    ? 'pk_live_YOUR_LIVE_KEY' // Replace with actual live key
+                    : 'pk_test_YOUR_TEST_KEY' // Replace with actual test key
+            },
+            features: {
+                authRequired: false,
+                autoSaveProgress: true,
+                offlineSupport: true
+            }
+        };
+
+        // Error handling for JavaScript loading
+        window.addEventListener('error', function(e) {
+            console.error('JavaScript error:', e.error);
+            
+            const errorEl = document.getElementById('quiz-error');
+            if (errorEl) {
+                errorEl.querySelector('.error-text').textContent = 'Failed to load quiz components';
+                errorEl.classList.remove('hidden');
+            }
+        });
+
+        // Loading state management
+        let scriptsLoaded = 0;
+        const totalScripts = 4; // api-service, auth-manager, payment-integration, integrated-quiz
+
+        function onScriptLoaded() {
+            scriptsLoaded++;
+            console.log(`Script loaded (${scriptsLoaded}/${totalScripts})`);
+            
+            if (scriptsLoaded === totalScripts) {
+                console.log('✅ All scripts loaded successfully');
+                // Additional initialization can go here
+            }
+        }
+
+        // Progressive enhancement for older browsers
+        if (!window.fetch) {
+            console.warn('Fetch API not supported, loading polyfill');
+            const script = document.createElement('script');
+            script.src = 'https://polyfill.io/v3/polyfill.min.js?features=fetch';
+            document.head.appendChild(script);
+        }
+    </script>
+
+    <!-- Core Integration Scripts -->
+    <script src="js/api-service.js" onload="onScriptLoaded()" onerror="console.error('Failed to load API service')"></script>
+    <script src="js/auth-manager.js" onload="onScriptLoaded()" onerror="console.error('Failed to load auth manager')"></script>
+    <script src="js/payment-integration.js" onload="onScriptLoaded()" onerror="console.error('Failed to load payment integration')"></script>
+    <script src="js/integrated-quiz.js" onload="onScriptLoaded()" onerror="console.error('Failed to load integrated quiz')"></script>
+
+    <!-- Analytics (load last) -->
+    <script>
+        // Add your analytics tracking here
+        console.log('🎯 Quiz page loaded');
+    </script>
+</body>
+</html>

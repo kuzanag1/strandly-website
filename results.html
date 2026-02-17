@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Hair Analysis Results - Strandly</title>
+    <meta name="description" content="Your personalized hair analysis results with custom product recommendations and care routine.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/loading.css">
+    <link rel="stylesheet" href="css/results.css">
+    
+    <!-- Stripe for purchase functionality -->
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="site-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html">
+                        <img src="images/strandly-logo.png" alt="Strandly" width="150" height="40">
+                    </a>
+                </div>
+                <nav class="auth-nav">
+                    <div class="unauthenticated-only">
+                        <a href="login.html" class="btn btn-outline">Login</a>
+                        <a href="signup.html" class="btn btn-primary">Sign Up</a>
+                    </div>
+                    <div class="authenticated-only" style="display: none;">
+                        <span class="user-greeting">Hi, <span class="user-name">User</span>!</span>
+                        <button class="logout-btn btn btn-outline">Logout</button>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Loading State -->
+    <div id="results-loading" class="results-loading">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Loading your personalized analysis...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="results-error" class="results-error hidden">
+        <div class="error-icon">⚠️</div>
+        <h2>Unable to Load Results</h2>
+        <p class="error-text">We couldn't load your hair analysis results.</p>
+        <div class="error-actions">
+            <button class="btn btn-primary" onclick="window.location.href='quiz.html'">
+                Retake Quiz
+            </button>
+            <button class="btn btn-outline" onclick="window.resultsManager?.loadResults()">
+                Try Again
+            </button>
+        </div>
+    </div>
+
+    <!-- Results Content -->
+    <main id="results-content" class="results-container hidden">
+        <div class="container">
+            
+            <!-- Results Header -->
+            <section class="results-header">
+                <div class="results-intro">
+                    <h1>Your Personalized Hair Analysis</h1>
+                    <p class="results-subtitle">Based on your quiz responses, here's your complete hair profile and recommendations</p>
+                    <div class="analysis-meta">
+                        <span class="confidence-score">Confidence: <strong id="confidence-value">95%</strong></span>
+                        <span class="analysis-date">Analyzed: <span id="analysis-date">Today</span></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Hair Profile Summary -->
+            <section class="hair-profile-summary">
+                <div class="profile-card">
+                    <h2>Your Hair Profile</h2>
+                    <div class="profile-grid">
+                        <div class="profile-item">
+                            <div class="profile-icon">🧬</div>
+                            <div class="profile-details">
+                                <h3>Hair Type</h3>
+                                <p id="hair-type-text">Loading...</p>
+                                <span id="hair-type-code" class="hair-code">-</span>
+                            </div>
+                        </div>
+                        <div class="profile-item">
+                            <div class="profile-icon">💧</div>
+                            <div class="profile-details">
+                                <h3>Porosity Level</h3>
+                                <p id="porosity-text">Loading...</p>
+                            </div>
+                        </div>
+                        <div class="profile-item">
+                            <div class="profile-icon">🌱</div>
+                            <div class="profile-details">
+                                <h3>Scalp Type</h3>
+                                <p id="scalp-type-text">Loading...</p>
+                            </div>
+                        </div>
+                        <div class="profile-item">
+                            <div class="profile-icon">⚡</div>
+                            <div class="profile-details">
+                                <h3>Damage Level</h3>
+                                <p id="damage-level-text">Loading...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Personalized Advice -->
+            <section class="personalized-advice">
+                <div class="advice-card">
+                    <h2>Your Personalized Care Routine</h2>
+                    <div id="personalized-advice-content" class="advice-content">
+                        <div class="skeleton skeleton-text wide"></div>
+                        <div class="skeleton skeleton-text medium"></div>
+                        <div class="skeleton skeleton-text wide"></div>
+                    </div>
+                    
+                    <div class="care-schedule">
+                        <h3>Recommended Schedule</h3>
+                        <div class="schedule-item">
+                            <span class="schedule-icon">🚿</span>
+                            <span class="schedule-text">Wash frequency: <strong id="wash-frequency">2-3 times per week</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Product Recommendations -->
+            <section class="product-recommendations">
+                <h2>Recommended Products for Your Hair</h2>
+                <p class="recommendations-intro">Based on your hair analysis, here are our top product recommendations:</p>
+                
+                <!-- Shampoo Recommendations -->
+                <div class="product-category">
+                    <h3>Shampoos</h3>
+                    <div id="shampoo-products" class="products-grid">
+                        <!-- Products will be loaded dynamically -->
+                        <div class="product-skeleton">
+                            <div class="skeleton skeleton-text wide"></div>
+                            <div class="skeleton skeleton-text medium"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Conditioner Recommendations -->
+                <div class="product-category">
+                    <h3>Conditioners</h3>
+                    <div id="conditioner-products" class="products-grid">
+                        <div class="product-skeleton">
+                            <div class="skeleton skeleton-text wide"></div>
+                            <div class="skeleton skeleton-text medium"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Treatment Recommendations -->
+                <div class="product-category">
+                    <h3>Treatments</h3>
+                    <div id="treatment-products" class="products-grid">
+                        <div class="product-skeleton">
+                            <div class="skeleton skeleton-text wide"></div>
+                            <div class="skeleton skeleton-text medium"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Purchase Analysis (for non-authenticated users) -->
+            <section id="purchase-analysis" class="purchase-section unauthenticated-only">
+                <div class="purchase-card">
+                    <h2>Get Your Complete Analysis</h2>
+                    <p>Unlock detailed insights, personalized product recommendations, and a custom care routine.</p>
+                    
+                    <div class="purchase-benefits">
+                        <div class="benefit">✅ Detailed hair damage assessment</div>
+                        <div class="benefit">✅ Custom product recommendations</div>
+                        <div class="benefit">✅ Personalized care routine</div>
+                        <div class="benefit">✅ Progress tracking over time</div>
+                    </div>
+                    
+                    <div class="purchase-action">
+                        <div class="price">
+                            <span class="price-amount">$19.99</span>
+                            <span class="price-note">One-time analysis</span>
+                        </div>
+                        <button class="btn btn-primary btn-large purchase-analysis-btn">
+                            Purchase Complete Analysis
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Subscription Upgrade (for authenticated users) -->
+            <section id="subscription-upgrade" class="subscription-section authenticated-only" style="display: none;">
+                <div class="subscription-card">
+                    <h2>Track Your Hair Journey</h2>
+                    <p>Get ongoing support and updated recommendations as your hair changes.</p>
+                    
+                    <div class="subscription-plans">
+                        <div class="plan">
+                            <h3>Monthly Tracking</h3>
+                            <div class="plan-price">$9.99<span>/month</span></div>
+                            <button class="btn btn-outline upgrade-plan-btn" data-plan="monthly">
+                                Start Tracking
+                            </button>
+                        </div>
+                        <div class="plan plan-popular">
+                            <div class="popular-badge">Most Popular</div>
+                            <h3>Annual Tracking</h3>
+                            <div class="plan-price">$99.99<span>/year</span></div>
+                            <div class="plan-savings">Save 17%</div>
+                            <button class="btn btn-primary upgrade-plan-btn" data-plan="annual">
+                                Save & Start
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Actions -->
+            <section class="results-actions">
+                <div class="actions-grid">
+                    <button class="btn btn-outline" onclick="window.print()">
+                        📄 Download Results
+                    </button>
+                    <button class="btn btn-outline" onclick="window.location.href='quiz.html'">
+                        🔄 Retake Quiz
+                    </button>
+                    <button class="btn btn-outline share-btn" data-share="true">
+                        📤 Share Results
+                    </button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2026 Strandly. Your hair, decoded.</p>
+                <div class="footer-links">
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="contact.html">Contact</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        window.STRANDLY_CONFIG = {
+            api: {
+                baseUrl: window.location.hostname.includes('netlify') || window.location.hostname.includes('strandly') 
+                    ? 'https://strandly-backend.onrender.com/api'
+                    : 'http://localhost:3000/api'
+            },
+            stripe: {
+                publishableKey: window.location.hostname.includes('strandly') && !window.location.hostname.includes('netlify')
+                    ? 'pk_live_YOUR_LIVE_KEY' // Replace with actual live key
+                    : 'pk_test_YOUR_TEST_KEY' // Replace with actual test key
+            }
+        };
+    </script>
+
+    <script src="js/api-service.js"></script>
+    <script src="js/auth-manager.js"></script>
+    <script src="js/payment-integration.js"></script>
+    <script src="js/results-manager.js"></script>
+
+    <!-- Analytics -->
+    <script>
+        console.log('📊 Results page loaded');
+        
+        // Track results page view
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'page_view', {
+                page_title: 'Hair Analysis Results',
+                page_location: window.location.href
+            });
+        }
+    </script>
+</body>
+</html>

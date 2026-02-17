@@ -1,6 +1,6 @@
 /**
- * STRANDLY HAIR QUIZ - WORKING IMPLEMENTATION
- * Built with Opus model for complexity handling
+ * STRANDLY HAIR QUIZ - BACKEND INTEGRATED VERSION
+ * Updated for full API integration and payment flow
  * February 17, 2026
  */
 
@@ -9,6 +9,7 @@ class WorkingStrandlyQuiz {
         this.currentQuestionIndex = 0;
         this.userAnswers = {};
         this.totalQuestions = 10;
+        this.isSubmitting = false;
         
         // Define all 10 questions - SPECIALIST OPTIMIZED
         this.quizQuestions = [
@@ -101,152 +102,199 @@ class WorkingStrandlyQuiz {
                 ]
             },
             {
-                id: 'environment-type',
-                text: "What's your climate like most of the year?",
-                type: 'single-choice',
+                id: 'lifestyle-factors',
+                text: "Which lifestyle factors affect your hair? (Select all that apply)",
+                type: 'multiple-choice',
                 choices: [
-                    'Super humid (frizz city!) 🌴',
-                    'Pretty dry (static & flyaways) 🏜️',
-                    'Moderate & comfortable 🌤️',
-                    'Changes with seasons 🍂'
+                    'Frequent swimming 🏊‍♀️',
+                    'High stress levels 😤',
+                    'Hard water area 🚿',
+                    'Diet changes recently 🥗',
+                    'Hormonal changes 🌟',
+                    'None of these ✅'
                 ]
             },
             {
-                id: 'hair-goals',
-                text: "What's your ultimate hair dream?",
-                type: 'single-choice',
-                choices: [
-                    'Healthy, strong hair that glows 💎',
-                    'Faster growth & more length 🚀',
-                    'Easy styling that lasts all day ⏰',
-                    'Mirror-like shine & smoothness ✨',
-                    'Volume & body that won\'t quit 🎈'
-                ]
+                id: 'email',
+                text: "Enter your email to receive your personalized hair analysis:",
+                type: 'email',
+                choices: [],
+                required: true,
+                placeholder: 'your.email@example.com'
             }
         ];
         
-        // Initialize DOM elements
-        this.questionTextEl = null;
-        this.questionOptionsEl = null;
-        this.questionCounterEl = null;
-        this.progressFillEl = null;
-        this.prevButtonEl = null;
-        this.nextButtonEl = null;
+        console.log('🧬 Hair quiz initialized with', this.totalQuestions, 'questions');
     }
-
+    
     /**
-     * Initialize the quiz - find DOM elements and start first question
+     * Initialize quiz
      */
     initialize() {
-        console.log('🎯 Initializing Working Strandly Quiz');
-        console.log(`Total questions: ${this.quizQuestions.length}`);
-        
-        // Find DOM elements
-        this.questionTextEl = document.getElementById('question-text');
-        this.questionOptionsEl = document.getElementById('question-options');
-        this.questionCounterEl = document.getElementById('question-counter');
-        this.progressFillEl = document.getElementById('progress-fill');
-        this.prevButtonEl = document.getElementById('prev-btn');
-        this.nextButtonEl = document.getElementById('next-btn');
-        
-        // Verify all elements exist
-        if (!this.questionTextEl || !this.questionOptionsEl || !this.questionCounterEl || 
-            !this.progressFillEl || !this.prevButtonEl || !this.nextButtonEl) {
-            console.error('❌ Required DOM elements not found');
+        try {
+            // Get DOM elements
+            this.questionTextEl = document.getElementById('question-text');
+            this.questionOptionsEl = document.getElementById('question-options');
+            this.prevButtonEl = document.getElementById('prev-btn');
+            this.nextButtonEl = document.getElementById('next-btn');
+            this.questionCounterEl = document.getElementById('question-counter');
+            this.progressFillEl = document.getElementById('progress-fill');
+            
+            if (!this.questionTextEl || !this.questionOptionsEl || !this.prevButtonEl || !this.nextButtonEl) {
+                throw new Error('Required quiz elements not found');
+            }
+            
+            // Bind event handlers
+            this.prevButtonEl.addEventListener('click', () => this.goToPreviousQuestion());
+            this.nextButtonEl.addEventListener('click', () => this.handleNextClick());
+            
+            // Load saved progress if exists
+            this.loadSavedProgress();
+            
+            // Display first question
+            this.displayCurrentQuestion();
+            
+            return true;
+            
+        } catch (error) {
+            console.error('Quiz initialization failed:', error);
             return false;
         }
-        
-        // Set up button event listeners
-        this.setupEventListeners();
-        
-        // Display first question
-        this.displayCurrentQuestion();
-        
-        return true;
     }
     
     /**
-     * Set up event listeners for navigation buttons
+     * Load saved progress from localStorage
      */
-    setupEventListeners() {
-        // Previous button
-        this.prevButtonEl.addEventListener('click', () => {
-            console.log('⬅️ Previous button clicked');
-            this.goToPreviousQuestion();
-        });
-        
-        // Next button
-        this.nextButtonEl.addEventListener('click', () => {
-            console.log('➡️ Next button clicked');
-            if (this.isLastQuestion()) {
-                this.completeQuiz();
-            } else {
-                this.goToNextQuestion();
+    loadSavedProgress() {
+        if (window.StrandlyApi) {
+            const savedProgress = window.StrandlyApi.loadQuizProgress();
+            if (savedProgress) {
+                this.currentQuestionIndex = savedProgress.currentQuestionIndex;
+                this.userAnswers = savedProgress.answers;
+                console.log('📂 Loaded saved progress:', savedProgress);
             }
-        });
+        }
     }
     
     /**
-     * Display the current question and options
+     * Save current progress
+     */
+    saveProgress() {
+        if (window.StrandlyApi) {
+            window.StrandlyApi.saveQuizProgress(this.currentQuestionIndex, this.userAnswers);
+        }
+    }
+    
+    /**
+     * Display current question
      */
     displayCurrentQuestion() {
-        const currentQuestion = this.quizQuestions[this.currentQuestionIndex];
-        console.log(`📝 Displaying question ${this.currentQuestionIndex + 1}: ${currentQuestion.id}`);
+        const question = this.quizQuestions[this.currentQuestionIndex];
         
         // Update question text
-        this.questionTextEl.textContent = currentQuestion.text;
+        this.questionTextEl.textContent = question.text;
         
         // Update question counter
         this.questionCounterEl.textContent = `${this.currentQuestionIndex + 1} of ${this.totalQuestions}`;
         
         // Update progress bar
-        const progressPercent = ((this.currentQuestionIndex + 1) / this.totalQuestions) * 100;
-        this.progressFillEl.style.width = `${progressPercent}%`;
+        const progressPercentage = ((this.currentQuestionIndex) / this.totalQuestions) * 100;
+        this.progressFillEl.style.width = `${progressPercentage}%`;
         
-        // Clear and populate options
+        // Clear previous options
         this.questionOptionsEl.innerHTML = '';
         
-        currentQuestion.choices.forEach((choice, index) => {
-            const optionButton = document.createElement('button');
-            optionButton.className = 'quiz-option-btn';
-            optionButton.textContent = choice;
-            optionButton.setAttribute('data-choice-index', index);
-            optionButton.setAttribute('data-choice-value', choice);
-            
-            // Check if this option is already selected
-            if (this.isChoiceSelected(currentQuestion.id, choice)) {
-                optionButton.classList.add('selected');
-            }
-            
-            // Add click event listener
-            optionButton.addEventListener('click', (event) => {
-                this.handleChoiceSelection(event, currentQuestion, choice);
-            });
-            
-            this.questionOptionsEl.appendChild(optionButton);
-        });
+        if (question.type === 'email') {
+            this.renderEmailInput(question);
+        } else {
+            this.renderChoiceOptions(question);
+        }
         
         // Update navigation buttons
         this.updateNavigationButtons();
+        
+        console.log(`Displaying question ${this.currentQuestionIndex + 1}: ${question.id}`);
     }
     
     /**
-     * Handle when user selects a choice
+     * Render email input field
      */
-    handleChoiceSelection(event, question, selectedChoice) {
-        console.log(`✅ Choice selected: ${selectedChoice} for question ${question.id}`);
+    renderEmailInput(question) {
+        const inputContainer = document.createElement('div');
+        inputContainer.className = 'email-input-container';
+        
+        const emailInput = document.createElement('input');
+        emailInput.type = 'email';
+        emailInput.id = 'email-input';
+        emailInput.placeholder = question.placeholder;
+        emailInput.className = 'email-input';
+        emailInput.required = question.required;
+        
+        // Set existing value if available
+        if (this.userAnswers[question.id]) {
+            emailInput.value = this.userAnswers[question.id];
+        }
+        
+        // Add input event listener
+        emailInput.addEventListener('input', (event) => {
+            this.handleEmailInput(question.id, event.target.value);
+        });
+        
+        inputContainer.appendChild(emailInput);
+        this.questionOptionsEl.appendChild(inputContainer);
+        
+        // Focus the input
+        setTimeout(() => emailInput.focus(), 100);
+    }
+    
+    /**
+     * Render choice options for question
+     */
+    renderChoiceOptions(question) {
+        question.choices.forEach((choice, index) => {
+            const optionDiv = document.createElement('div');
+            optionDiv.className = 'quiz-option';
+            
+            // Check if this choice is already selected
+            if (this.isChoiceSelected(question.id, choice)) {
+                optionDiv.classList.add('selected');
+            }
+            
+            optionDiv.textContent = choice;
+            optionDiv.setAttribute('data-choice', choice);
+            optionDiv.addEventListener('click', (event) => this.handleChoiceClick(event, question));
+            
+            this.questionOptionsEl.appendChild(optionDiv);
+        });
+    }
+    
+    /**
+     * Handle email input
+     */
+    handleEmailInput(questionId, value) {
+        this.userAnswers[questionId] = value;
+        this.updateNavigationButtons();
+        this.saveProgress();
+    }
+    
+    /**
+     * Handle choice click
+     */
+    handleChoiceClick(event, question) {
+        const selectedChoice = event.target.getAttribute('data-choice');
+        console.log(`Selected: ${selectedChoice} for question: ${question.id}`);
         
         if (question.type === 'single-choice') {
-            // Single choice: deselect all others, select this one
-            const allOptions = this.questionOptionsEl.querySelectorAll('.quiz-option-btn');
-            allOptions.forEach(btn => btn.classList.remove('selected'));
+            // Single choice: clear other selections
+            this.questionOptionsEl.querySelectorAll('.quiz-option').forEach(option => {
+                option.classList.remove('selected');
+            });
             event.target.classList.add('selected');
             
-            // Store the answer
+            // Store answer
             this.userAnswers[question.id] = selectedChoice;
-            
         } else if (question.type === 'multiple-choice') {
-            // Multiple choice: toggle this option
+            // Multiple choice: toggle selection
             event.target.classList.toggle('selected');
             
             // Initialize array if doesn't exist
@@ -269,6 +317,7 @@ class WorkingStrandlyQuiz {
         
         // Update navigation after selection
         this.updateNavigationButtons();
+        this.saveProgress();
         
         console.log('Current answers:', this.userAnswers);
     }
@@ -299,9 +348,19 @@ class WorkingStrandlyQuiz {
             return answer && answer.trim().length > 0;
         } else if (currentQuestion.type === 'multiple-choice') {
             return answer && Array.isArray(answer) && answer.length > 0;
+        } else if (currentQuestion.type === 'email') {
+            return answer && this.isValidEmail(answer);
         }
         
         return false;
+    }
+    
+    /**
+     * Validate email format
+     */
+    isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
     }
     
     /**
@@ -313,15 +372,30 @@ class WorkingStrandlyQuiz {
         
         // Next button: disabled if no valid answer, show different text on last question
         const hasAnswer = this.hasValidAnswer();
-        this.nextButtonEl.disabled = !hasAnswer;
+        this.nextButtonEl.disabled = !hasAnswer || this.isSubmitting;
         
         if (this.isLastQuestion()) {
-            this.nextButtonEl.textContent = 'Complete Quiz';
+            this.nextButtonEl.textContent = this.isSubmitting ? 'Processing...' : 'Get My Analysis ($29)';
+            this.nextButtonEl.classList.add('cta-button');
         } else {
             this.nextButtonEl.textContent = 'Next';
+            this.nextButtonEl.classList.remove('cta-button');
         }
         
         console.log(`Navigation updated: prev=${!this.prevButtonEl.disabled}, next=${!this.nextButtonEl.disabled}, hasAnswer=${hasAnswer}`);
+    }
+    
+    /**
+     * Handle next button click
+     */
+    handleNextClick() {
+        if (this.isSubmitting) return;
+        
+        if (this.isLastQuestion()) {
+            this.completeQuiz();
+        } else {
+            this.goToNextQuestion();
+        }
     }
     
     /**
@@ -354,34 +428,85 @@ class WorkingStrandlyQuiz {
     }
     
     /**
-     * Complete the quiz
+     * Complete the quiz and submit to backend
      */
-    completeQuiz() {
-        console.log('🏆 Quiz completed!');
+    async completeQuiz() {
+        console.log('🏆 Starting quiz completion...');
+        
+        // Prevent double submission
+        if (this.isSubmitting) {
+            console.log('Already submitting, ignoring...');
+            return;
+        }
+        
+        this.isSubmitting = true;
+        this.updateNavigationButtons();
+        
+        // Validate we have all required answers
+        const answeredCount = Object.keys(this.userAnswers).length;
+        if (answeredCount < this.totalQuestions) {
+            alert(`Please answer all questions. You've answered ${answeredCount} out of ${this.totalQuestions}.`);
+            this.isSubmitting = false;
+            this.updateNavigationButtons();
+            return;
+        }
+        
+        // Validate email
+        if (!this.userAnswers.email || !this.isValidEmail(this.userAnswers.email)) {
+            alert('Please enter a valid email address to receive your analysis.');
+            this.isSubmitting = false;
+            this.updateNavigationButtons();
+            return;
+        }
+        
         console.log('Final answers:', this.userAnswers);
         
-        // Count answered questions
-        const answeredCount = Object.keys(this.userAnswers).length;
-        
-        alert(`Quiz completed! You answered ${answeredCount} out of ${this.totalQuestions} questions. Thank you for your responses.`);
-        
-        // Here you would normally send results to backend
-        // window.location.href = 'results.html';
+        try {
+            // Check if API service is available
+            if (!window.StrandlyApi) {
+                throw new Error('API service not available');
+            }
+            
+            // Use the API service to complete the quiz
+            await window.StrandlyApi.completeQuiz(this.userAnswers);
+            
+            // Clear saved progress on successful submission
+            window.StrandlyApi.clearQuizProgress();
+            
+        } catch (error) {
+            console.error('Quiz completion failed:', error);
+            
+            // Show user-friendly error message
+            alert('We encountered an issue submitting your quiz. Please try again or contact support if the problem persists.');
+            
+            this.isSubmitting = false;
+            this.updateNavigationButtons();
+        }
     }
 }
 
 // Initialize quiz when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 DOM loaded, starting Working Strandly Quiz');
+    console.log('🚀 DOM loaded, starting Backend-Integrated Strandly Quiz');
     
-    const quiz = new WorkingStrandlyQuiz();
-    const initialized = quiz.initialize();
+    // Wait for API service to be available
+    const initQuiz = () => {
+        if (window.StrandlyApi) {
+            const quiz = new WorkingStrandlyQuiz();
+            const initialized = quiz.initialize();
+            
+            if (initialized) {
+                console.log('✅ Quiz successfully initialized with API integration');
+                // Make quiz globally accessible for debugging
+                window.strandlyQuiz = quiz;
+            } else {
+                console.error('❌ Quiz initialization failed');
+            }
+        } else {
+            console.log('⏳ Waiting for API service...');
+            setTimeout(initQuiz, 100);
+        }
+    };
     
-    if (initialized) {
-        console.log('✅ Quiz successfully initialized');
-        // Make quiz globally accessible for debugging
-        window.strandlyQuiz = quiz;
-    } else {
-        console.error('❌ Quiz initialization failed');
-    }
+    initQuiz();
 });

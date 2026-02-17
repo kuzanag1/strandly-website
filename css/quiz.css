@@ -71,3 +71,111 @@
         background: #fff;
     }
 }
+
+/* Email input styling */
+.email-input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 24px 0;
+}
+
+.email-input {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 16px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 16px;
+    font-family: inherit;
+    background: white;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.email-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.email-input:invalid {
+    border-color: #e53e3e;
+}
+
+.email-input:invalid:focus {
+    box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1);
+}
+
+/* CTA button styling */
+.cta-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    font-weight: 600 !important;
+    padding: 16px 32px !important;
+    font-size: 18px !important;
+    border-radius: 12px !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+    transform: translateY(0);
+    transition: all 0.3s ease !important;
+}
+
+.cta-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4) !important;
+}
+
+.cta-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2) !important;
+}
+
+/* Quiz option for multiple choice and single choice */
+.quiz-option {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    color: #2d3748;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    user-select: none;
+}
+
+.quiz-option:hover {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.quiz-option.selected {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.15);
+    color: #667eea;
+    font-weight: 600;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .email-input {
+        font-size: 16px; /* Prevent zoom on iOS */
+        padding: 14px 16px;
+    }
+    
+    .cta-button {
+        padding: 14px 24px !important;
+        font-size: 16px !important;
+    }
+    
+    .quiz-option {
+        padding: 14px 16px;
+        font-size: 14px;
+    }
+}
