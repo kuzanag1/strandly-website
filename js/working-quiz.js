@@ -10,18 +10,18 @@ class WorkingStrandlyQuiz {
         this.userAnswers = {};
         this.totalQuestions = 10;
         
-        // Define all 10 questions clearly
+        // Define all 10 questions - SPECIALIST OPTIMIZED
         this.quizQuestions = [
             {
                 id: 'hair-concern',
-                text: "What's your main hair concern?",
+                text: "What's your biggest hair frustration right now?",
                 type: 'single-choice',
                 choices: [
-                    'Dryness and frizz',
-                    'Oily roots', 
-                    'Damage and breakage',
-                    'Thinning hair',
-                    'Hard to style'
+                    'My hair feels dry and lifeless 💧',
+                    'It gets greasy way too quickly 🫧',
+                    'Damage from styling/treatments 🔥',
+                    'Thinning or lack of volume 📉',
+                    'Hard to style the way I want ✨'
                 ]
             },
             {
@@ -29,98 +29,98 @@ class WorkingStrandlyQuiz {
                 text: "How would you describe your hair length?",
                 type: 'single-choice',
                 choices: [
-                    'Short (above shoulders)',
-                    'Medium (shoulder to mid-back)',
-                    'Long (below mid-back)'
+                    'Short & sassy (above shoulders) ✂️',
+                    'Medium length (shoulder to chest) 📏',
+                    'Long & luscious (past chest) 🌊'
                 ]
             },
             {
                 id: 'wash-frequency',
-                text: "How often do you wash your hair?",
+                text: "How often do you currently wash your hair?",
                 type: 'single-choice',
                 choices: [
-                    'Daily',
-                    '2-3 times per week',
-                    'Once a week',
-                    'Less than once a week'
+                    'Every day (I have to!) 🚿',
+                    '2-3 times per week ⭐',
+                    'Once a week 📅',
+                    'Less than once a week 🌿'
                 ]
             },
             {
                 id: 'hair-texture',
-                text: "Which best describes your hair texture?",
+                text: "What's your natural hair texture?",
                 type: 'single-choice',
                 choices: [
-                    'Straight - lies flat, minimal wave',
-                    'Wavy - gentle waves, slight bends',
-                    'Curly - defined curls and spirals',
-                    'Coily - tight coils and kinks'
+                    'Pin-straight (sleek & smooth) ➡️',
+                    'Wavy (with some natural movement) 🌊',
+                    'Curly (defined spirals) 🌀',
+                    'Coily/kinky (tight curls) ⚡'
                 ]
             },
             {
                 id: 'hair-thickness',
-                text: "How thick does each hair strand feel?",
+                text: "How does your hair feel when you touch it?",
                 type: 'single-choice',
                 choices: [
-                    'Fine - like silk thread, hard to feel',
-                    'Medium - noticeable but flexible',
-                    'Thick - easily felt, strong and coarse'
+                    'Fine (soft but can look flat) 🪶',
+                    'Medium (just right balance) ⚖️',
+                    'Thick (lots of volume & body) 💪'
                 ]
             },
             {
                 id: 'hair-porosity',
-                text: "Hair Porosity Test: Drop a clean hair in water. What happens?",
+                text: "Quick strand test: Drop a clean hair in water - what happens?",
                 type: 'single-choice',
                 choices: [
-                    'It floats on top (Low porosity)',
-                    'It slowly sinks (Normal porosity)',
-                    'It sinks quickly (High porosity)',
-                    "I haven't tested this yet"
+                    'It floats on top 🎈',
+                    'Slowly sinks to the bottom 🐌',
+                    'Sinks quickly like a rock 🪨',
+                    'I\'d rather skip this step ⏭️'
                 ]
             },
             {
                 id: 'scalp-type',
-                text: "How would you describe your scalp?",
+                text: "How does your scalp usually feel?",
                 type: 'single-choice',
                 choices: [
-                    'Gets oily quickly (1-2 days)',
-                    'Normal - balanced, not too oily or dry',
-                    'Dry or flaky - tight, maybe dandruff',
-                    'Sensitive - reacts to products'
+                    'Gets oily quickly 🫧',
+                    'Pretty normal & balanced ✅',
+                    'Often feels dry or tight 🌵',
+                    'Sensitive or easily irritated 🌸'
                 ]
             },
             {
                 id: 'chemical-treatments',
-                text: "What chemical treatments have you had? (Select all that apply)",
+                text: "What treatments have you used on your hair? (Select all that apply)",
                 type: 'multiple-choice',
                 choices: [
-                    'None - my hair is natural',
-                    'Hair coloring or dye',
-                    'Bleaching or lightening',
-                    'Perms or chemical relaxers',
-                    'Highlights or lowlights'
+                    'None - I keep it natural 🌿',
+                    'Hair color/highlights ✨',
+                    'Bleaching treatments 💫',
+                    'Chemical relaxers/perms 🌀',
+                    'Heat styling regularly 🔥'
                 ]
             },
             {
                 id: 'environment-type',
-                text: "What's your environment like?",
+                text: "What's your climate like most of the year?",
                 type: 'single-choice',
                 choices: [
-                    'Humid climate - high moisture in air',
-                    'Dry climate - low humidity',
-                    'Moderate climate - balanced',
-                    'Changes with seasons'
+                    'Super humid (frizz city!) 🌴',
+                    'Pretty dry (static & flyaways) 🏜️',
+                    'Moderate & comfortable 🌤️',
+                    'Changes with seasons 🍂'
                 ]
             },
             {
                 id: 'hair-goals',
-                text: "What's your main hair goal?",
+                text: "What's your ultimate hair dream?",
                 type: 'single-choice',
                 choices: [
-                    'Healthier, stronger hair overall',
-                    'Faster hair growth',
-                    'Easier to style and manage',
-                    'More shine and smoothness',
-                    'More volume and thickness'
+                    'Healthy, strong hair that glows 💎',
+                    'Faster growth & more length 🚀',
+                    'Easy styling that lasts all day ⏰',
+                    'Mirror-like shine & smoothness ✨',
+                    'Volume & body that won\'t quit 🎈'
                 ]
             }
         ];
