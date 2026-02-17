@@ -352,3 +352,14 @@ class FixedStrandlyQuiz {
         }, 2000);
     }
 }
+
+// Initialize quiz when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Initializing Strandly Quiz...');
+    
+    // Create and start the quiz
+    window.strandlyQuiz = new FixedStrandlyQuiz();
+    window.strandlyQuiz.start();
+    
+    console.log('✅ Quiz initialized successfully');
+});
