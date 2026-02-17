@@ -65,10 +65,7 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
 }
 
-.nav-logo-main {
-    height: 60px;
-    width: auto;
-}
+/* Logo styling removed - using text-based branding only */
     margin: 0;
 }
 
@@ -182,43 +179,9 @@ h1, h2, h3, h4, h5, h6 {
     gap: 0.5rem;
 }
 
-.trust-icon {
-    width: 20px;
-    height: 20px;
-}
+/* Trust icons removed - using text-only indicators */
 
-/* Hero Images */
-.hero-image-container {
-    position: relative;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-}
-
-.hero-main-image {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 20px;
-}
-
-.hair-types-overlay {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    background: white;
-    border-radius: 12px;
-    padding: 16px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    transform: scale(0.8);
-}
-
-.hair-types-image {
-    width: 200px;
-    height: auto;
-    display: block;
-    border-radius: 8px;
-}
+/* Hero images removed - clean text-only design */
 
 .hair-sample.curly {
     background: linear-gradient(180deg, #2F1B14 0%, #8B4513 100%);

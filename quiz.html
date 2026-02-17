@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hair Analysis Quiz - Strandly</title>
+    <title>Strandly Hair Analysis - Personalized Hair Profile Quiz</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -17,8 +17,8 @@
             <div class="quiz-nav">
                 <a href="index.html" class="back-link">← Back to Strandly</a>
                 <div class="quiz-logo">
-                    <h1 class="gradient-text">Strandly</h1>
-                    <span>Your hair, decoded</span>
+                    <h1 class="gradient-text">Strandly Hair Analysis</h1>
+                    <span>Your personalized hair profile</span>
                 </div>
                 <div class="quiz-progress">
                     <span id="question-counter">1 of 10</span>
@@ -86,6 +86,7 @@
 
         .quiz-logo {
             text-align: center;
+            flex: 1;
         }
         
         .quiz-logo h1 {
@@ -94,14 +95,17 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin: 0;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: 700;
+            line-height: 1.2;
         }
 
         .quiz-logo span {
             color: #6c757d;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             display: block;
+            margin-top: 0.25rem;
+            font-weight: 500;
         }
 
         .quiz-progress {
@@ -349,13 +353,7 @@
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
         }
 
-        .option-image {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 0.5rem;
-        }
+        /* Option images removed - text-only approach */
 
         .option-text {
             font-weight: 600;
@@ -419,16 +417,21 @@
                 gap: 1rem;
                 text-align: center;
             }
+            
+            .quiz-logo h1 {
+                font-size: 1.3rem;
+            }
+            
+            .quiz-logo span {
+                font-size: 0.8rem;
+            }
 
             .visual-grid {
                 grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
                 gap: 0.75rem;
             }
 
-            .option-image {
-                width: 60px;
-                height: 60px;
-            }
+            /* Mobile image styles removed - text-only approach */
 
             .error-content, .warning-content {
                 margin: 0.5rem;
@@ -437,7 +440,53 @@
         }
     </style>
 
-    <script src="js/strandly-fixed.js"></script>
-    <!-- JavaScript initialization is now handled in strandly-fixed.js -->
+    <script src="js/simple-quiz.js"></script>
+    
+    <style>
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 15px 20px;
+            margin: 10px 0;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            background: white;
+            font-size: 16px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .option-btn:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .option-btn.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+        
+        .nav-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .nav-button:not(:disabled) {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        
+        .nav-button:not(:disabled):hover {
+            background: #5a6fd8;
+        }
+    </style>
 </body>
 </html>
