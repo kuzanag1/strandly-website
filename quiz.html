@@ -440,52 +440,128 @@
         }
     </style>
 
-    <script src="js/simple-quiz.js"></script>
+    <script src="js/working-quiz.js"></script>
     
     <style>
-        .option-btn {
+        /* Quiz-specific styles */
+        .quiz-option-btn {
             display: block;
             width: 100%;
-            padding: 15px 20px;
-            margin: 10px 0;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 8px 0;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
             background: white;
+            color: #2d3748;
             font-size: 16px;
+            font-weight: 500;
             text-align: left;
             cursor: pointer;
             transition: all 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
         
-        .option-btn:hover {
+        .quiz-option-btn:hover {
             border-color: #667eea;
-            background: #f8f9ff;
+            background: #f7fafc;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
         }
         
-        .option-btn.selected {
+        .quiz-option-btn.selected {
             border-color: #667eea;
-            background: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            font-weight: 600;
+        }
+        
+        .quiz-option-btn.selected:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+        }
+        
+        .nav-button {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 8px;
+        }
+        
+        .nav-button.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .nav-button.primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .nav-button.secondary {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .nav-button.secondary:hover:not(:disabled) {
+            background: #edf2f7;
+            border-color: #cbd5e0;
         }
         
         .nav-button:disabled {
-            opacity: 0.5;
+            opacity: 0.4;
             cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
         
-        .nav-button:not(:disabled) {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
-            margin: 10px;
+        .progress-fill {
+            height: 6px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 3px;
+            transition: width 0.5s ease;
         }
         
-        .nav-button:not(:disabled):hover {
-            background: #5a6fd8;
+        .question-text {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 24px;
+            line-height: 1.4;
+        }
+        
+        .question-options {
+            margin: 24px 0 32px 0;
+        }
+        
+        .quiz-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        @media (max-width: 768px) {
+            .quiz-option-btn {
+                padding: 14px 16px;
+                font-size: 15px;
+            }
+            
+            .nav-button {
+                padding: 12px 20px;
+                font-size: 15px;
+            }
+            
+            .question-text {
+                font-size: 20px;
+            }
         }
     </style>
 </body>
