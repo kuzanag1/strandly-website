@@ -239,17 +239,17 @@
         }
     </style>
 
-    <script src="js/strandly.js"></script>
+    <script src="js/strandly-fixed.js"></script>
     <script>
-        // Enhanced Visual Quiz Implementation
+        // FIXED: Enhanced Visual Quiz Implementation with proper navigation
         let currentQuiz;
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize the enhanced visual quiz from strandly.js
-            currentQuiz = new StrandlyQuiz();
+            // Initialize the FIXED visual quiz 
+            currentQuiz = new FixedStrandlyQuiz();
             currentQuiz.start();
             
-            // Navigation button handlers
+            // Navigation button handlers (FIXED)
             document.getElementById('prev-btn').addEventListener('click', () => {
                 currentQuiz.previousQuestion();
             });
