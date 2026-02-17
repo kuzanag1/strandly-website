@@ -124,12 +124,15 @@ class StrandlyQuiz {
 
     start() {
         console.log('🚀 Starting Strandly Quiz');
+        console.log(`Total questions: ${this.questions.length}`);
+        this.questions.forEach((q, i) => console.log(`${i+1}. ${q.id}`));
         this.renderQuestion();
         this.updateNavigation();
     }
 
     renderQuestion() {
         const question = this.questions[this.currentQuestion];
+        console.log(`📝 Rendering question ${this.currentQuestion + 1}: ${question.id} - ${question.question}`);
         
         // Update question text
         const questionText = document.getElementById('question-text');
@@ -220,15 +223,16 @@ class StrandlyQuiz {
         const answer = this.answers[questionId];
         
         if (this.questions[this.currentQuestion].type === 'multiple') {
-            return answer && answer.length > 0;
+            return answer && Array.isArray(answer) && answer.length > 0;
         } else {
-            return answer && answer.length > 0;
+            return answer && answer.trim().length > 0;
         }
     }
 
     nextQuestion() {
         if (this.currentQuestion < this.questions.length - 1) {
             this.currentQuestion++;
+            console.log(`➡️ Advanced to question ${this.currentQuestion + 1}/${this.questions.length}`);
             this.renderQuestion();
         }
     }
@@ -236,6 +240,7 @@ class StrandlyQuiz {
     previousQuestion() {
         if (this.currentQuestion > 0) {
             this.currentQuestion--;
+            console.log(`⬅️ Went back to question ${this.currentQuestion + 1}/${this.questions.length}`);
             this.renderQuestion();
         }
     }
