@@ -16,7 +16,12 @@ class StrandlyApiService {
      * Determine API URL based on environment
      */
     determineApiUrl() {
-        // Production check
+        // Use config if available
+        if (window.StrandlyConfig && window.StrandlyConfig.api.baseUrl) {
+            return window.StrandlyConfig.api.baseUrl;
+        }
+        
+        // Fallback to environment detection
         if (window.location.hostname.includes('strandly') || window.location.hostname.includes('netlify')) {
             return 'https://strandly-backend.onrender.com';
         }
@@ -262,9 +267,9 @@ class StrandlyApiService {
             // 3. Show success message
             this.showSuccess('Quiz completed! Redirecting to payment...');
 
-            // 4. Small delay for UX, then redirect to payment
+            // 4. Small delay for UX, then redirect to new payment page
             setTimeout(() => {
-                this.redirectToPayment();
+                this.redirectToPaymentPage();
             }, 2000);
 
             return quizResponse;
@@ -273,6 +278,20 @@ class StrandlyApiService {
             console.error('Quiz completion workflow failed:', error);
             this.showError('Failed to complete quiz. Please try again.');
             throw error;
+        }
+    }
+
+    /**
+     * Redirect to new payment page with Stripe Elements
+     */
+    redirectToPaymentPage() {
+        const quizId = localStorage.getItem('strandly_quiz_id');
+        if (quizId) {
+            console.log('🔄 Redirecting to payment page');
+            window.location.href = `payment.html?quiz_id=${quizId}`;
+        } else {
+            console.error('❌ No quiz ID available for payment redirect');
+            this.showError('Unable to proceed to payment. Please retake the quiz.');
         }
     }
 }

@@ -375,7 +375,7 @@ class WorkingStrandlyQuiz {
         this.nextButtonEl.disabled = !hasAnswer || this.isSubmitting;
         
         if (this.isLastQuestion()) {
-            this.nextButtonEl.textContent = this.isSubmitting ? 'Processing...' : 'Get My Analysis ($29)';
+            this.nextButtonEl.textContent = this.isSubmitting ? 'Processing...' : 'Get My Analysis (€29)';
             this.nextButtonEl.classList.add('cta-button');
         } else {
             this.nextButtonEl.textContent = 'Next';

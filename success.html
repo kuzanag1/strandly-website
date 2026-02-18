@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful - Strandly Hair Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/strandly.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .success-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            max-width: 600px;
+            width: 100%;
+            margin: 2rem;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .success-icon {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 3rem 2rem;
+            position: relative;
+        }
+
+        .success-icon::before {
+            content: '✅';
+            font-size: 4rem;
+            display: block;
+            margin-bottom: 1rem;
+            animation: bounce 1s ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 60%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-30px); }
+            80% { transform: translateY(-15px); }
+        }
+
+        .success-content {
+            padding: 3rem 2rem;
+        }
+
+        .success-content h1 {
+            color: #495057;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 0 1rem 0;
+        }
+
+        .success-content p {
+            color: #6c757d;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin: 0 0 2rem 0;
+        }
+
+        .payment-details {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-left: 4px solid #28a745;
+        }
+
+        .payment-details h3 {
+            color: #495057;
+            margin: 0 0 1rem 0;
+            font-size: 1.1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: #495057;
+            font-weight: 600;
+        }
+
+        .next-steps {
+            background: #e7f3ff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-left: 4px solid #007bff;
+        }
+
+        .next-steps h3 {
+            color: #495057;
+            margin: 0 0 1rem 0;
+            font-size: 1.1rem;
+        }
+
+        .step-list {
+            text-align: left;
+            color: #495057;
+        }
+
+        .step-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 0.5rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-outline:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .processing-note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 2rem 0;
+            color: #856404;
+        }
+
+        .processing-note strong {
+            color: #495057;
+        }
+
+        /* Loading state for dynamic content */
+        .loading-placeholder {
+            background: #f8f9fa;
+            border-radius: 4px;
+            height: 1rem;
+            margin: 0.5rem 0;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .loading-placeholder.short {
+            width: 60%;
+        }
+
+        .loading-placeholder.long {
+            width: 85%;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .success-container {
+                margin: 1rem;
+            }
+
+            .success-icon {
+                padding: 2rem 1rem;
+            }
+
+            .success-content {
+                padding: 2rem 1.5rem;
+            }
+
+            .success-content h1 {
+                font-size: 1.5rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        /* Celebration animation */
+        .celebrate {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #667eea;
+            animation: confetti-fall 3s linear infinite;
+        }
+
+        .confetti:nth-child(2n) { background: #764ba2; animation-delay: 0.5s; }
+        .confetti:nth-child(3n) { background: #28a745; animation-delay: 1s; }
+        .confetti:nth-child(4n) { background: #ffc107; animation-delay: 1.5s; }
+
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Celebration confetti -->
+    <div id="celebration" class="celebrate" style="display: none;"></div>
+
+    <div class="success-container">
+        <div class="success-icon">
+            <h1 style="color: white; margin: 1rem 0 0 0; font-size: 1.8rem;">Payment Successful!</h1>
+            <p style="color: rgba(255,255,255,0.9); margin: 0.5rem 0 0 0;">Your hair analysis is being prepared</p>
+        </div>
+
+        <div class="success-content">
+            <h1>Thank You for Choosing Strandly! 🌟</h1>
+            <p>Your payment has been processed successfully. Our expert hair analysis system is now creating your personalized report.</p>
+
+            <div class="payment-details">
+                <h3>📄 Payment Summary</h3>
+                <div class="detail-item">
+                    <span class="detail-label">Service</span>
+                    <span class="detail-value">Professional Hair Analysis</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Amount Paid</span>
+                    <span class="detail-value">€29.00</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Transaction ID</span>
+                    <span class="detail-value" id="transaction-id">
+                        <div class="loading-placeholder short"></div>
+                    </span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Date</span>
+                    <span class="detail-value" id="payment-date">
+                        <div class="loading-placeholder short"></div>
+                    </span>
+                </div>
+            </div>
+
+            <div class="next-steps">
+                <h3>📧 What Happens Next?</h3>
+                <ul class="step-list">
+                    <li><strong>Immediate:</strong> Your quiz data is being analyzed by our expert system</li>
+                    <li><strong>Within 10 minutes:</strong> You'll receive your personalized hair analysis report via email</li>
+                    <li><strong>Includes:</strong> Hair type analysis, custom product recommendations, and care routine</li>
+                    <li><strong>Follow-up:</strong> Access your full results anytime from your email</li>
+                </ul>
+            </div>
+
+            <div class="processing-note">
+                <strong>⏰ Processing Time:</strong> Your analysis is typically ready within 5-10 minutes. 
+                Check your email (including spam folder) for your comprehensive hair report.
+            </div>
+
+            <div class="cta-buttons">
+                <a href="index.html" class="btn btn-primary">Back to Strandly Home</a>
+                <button id="check-email-btn" class="btn btn-outline">Check My Email</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api-service.js"></script>
+    <script>
+        class SuccessPageHandler {
+            constructor() {
+                this.quizId = this.getQuizId();
+                this.paymentIntentId = this.getPaymentIntentId();
+                console.log('🎉 Success page initialized:', { quizId: this.quizId, paymentIntentId: this.paymentIntentId });
+            }
+
+            getQuizId() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get('quiz_id') || sessionStorage.getItem('quiz_id');
+            }
+
+            getPaymentIntentId() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get('payment_intent') || sessionStorage.getItem('payment_intent_id');
+            }
+
+            initialize() {
+                this.loadPaymentDetails();
+                this.startCelebration();
+                this.bindEvents();
+                
+                // Clear sensitive data from storage
+                this.cleanupStorage();
+            }
+
+            loadPaymentDetails() {
+                // Load transaction ID
+                if (this.paymentIntentId) {
+                    document.getElementById('transaction-id').textContent = this.paymentIntentId.substring(0, 20) + '...';
+                } else {
+                    document.getElementById('transaction-id').textContent = 'Processing...';
+                }
+
+                // Load payment date
+                const now = new Date();
+                document.getElementById('payment-date').textContent = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+            }
+
+            startCelebration() {
+                const celebration = document.getElementById('celebration');
+                celebration.style.display = 'block';
+                
+                // Create confetti
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(() => {
+                        const confetti = document.createElement('div');
+                        confetti.className = 'confetti';
+                        confetti.style.left = Math.random() * 100 + '%';
+                        confetti.style.animationDelay = Math.random() * 3 + 's';
+                        confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                        celebration.appendChild(confetti);
+                        
+                        // Remove confetti after animation
+                        setTimeout(() => {
+                            if (confetti.parentNode) {
+                                confetti.parentNode.removeChild(confetti);
+                            }
+                        }, 5000);
+                    }, i * 100);
+                }
+                
+                // Hide celebration after 10 seconds
+                setTimeout(() => {
+                    celebration.style.display = 'none';
+                }, 10000);
+            }
+
+            bindEvents() {
+                const checkEmailBtn = document.getElementById('check-email-btn');
+                checkEmailBtn.addEventListener('click', () => {
+                    // Try to open default email client
+                    window.location.href = 'mailto:';
+                });
+            }
+
+            cleanupStorage() {
+                // Clear quiz progress and temporary data
+                localStorage.removeItem('strandly_quiz_progress');
+                sessionStorage.removeItem('payment_intent_id');
+                
+                console.log('🧹 Storage cleaned up');
+            }
+
+            // Track successful completion
+            trackCompletion() {
+                if (window.StrandlyApi) {
+                    window.StrandlyApi.trackEvent('payment_success', {
+                        quizId: this.quizId,
+                        paymentIntentId: this.paymentIntentId,
+                        amount: 29.00,
+                        currency: 'EUR'
+                    });
+                }
+            }
+        }
+
+        // Initialize success page when DOM loads
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 Success page DOM loaded');
+            
+            const successHandler = new SuccessPageHandler();
+            successHandler.initialize();
+            
+            // Track completion after a short delay
+            setTimeout(() => {
+                successHandler.trackCompletion();
+            }, 1000);
+            
+            // Make globally accessible for debugging
+            window.successHandler = successHandler;
+        });
+
+        // Handle browser back button
+        window.addEventListener('beforeunload', () => {
+            // Clear any remaining sensitive data
+            sessionStorage.removeItem('payment_intent_id');
+        });
+    </script>
+</body>
+</html>
