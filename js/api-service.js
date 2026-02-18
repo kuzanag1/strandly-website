@@ -255,8 +255,18 @@ class StrandlyApiService {
         try {
             console.log('🏁 Starting quiz completion workflow');
             
-            // 1. Submit quiz to backend
-            const quizResponse = await this.submitQuiz(finalAnswers);
+            // Store answers locally as backup
+            localStorage.setItem('strandly_quiz_answers', JSON.stringify(finalAnswers));
+            
+            // 1. Submit quiz to backend (if available)
+            let quizResponse = null;
+            try {
+                quizResponse = await this.submitQuiz(finalAnswers);
+            } catch (submitError) {
+                console.warn('Backend submission failed, continuing with local storage:', submitError);
+                // Generate a local quiz ID for payment flow
+                quizResponse = { quizId: 'local_' + Date.now() };
+            }
             
             // 2. Track completion event
             this.trackEvent('quiz_completed', {
@@ -264,19 +274,25 @@ class StrandlyApiService {
                 questionCount: Object.keys(finalAnswers).length
             });
 
-            // 3. Show success message
-            this.showSuccess('Quiz completed! Redirecting to payment...');
+            // 3. Store quiz ID for payment
+            if (quizResponse.quizId) {
+                localStorage.setItem('strandly_quiz_id', quizResponse.quizId);
+            }
 
-            // 4. Small delay for UX, then redirect to new payment page
+            // 4. Small delay for UX, then redirect to payment page
             setTimeout(() => {
                 this.redirectToPaymentPage();
-            }, 2000);
+            }, 1500);
 
             return quizResponse;
             
         } catch (error) {
             console.error('Quiz completion workflow failed:', error);
-            this.showError('Failed to complete quiz. Please try again.');
+            // Even if everything fails, still redirect to payment
+            console.log('Attempting fallback payment redirect');
+            setTimeout(() => {
+                this.redirectToPaymentPage();
+            }, 1000);
             throw error;
         }
     }

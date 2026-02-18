@@ -1,425 +1,378 @@
 /**
  * STRANDLY PAYMENT INTEGRATION
- * Stripe integration for hair analysis purchases
- * February 17, 2026
+ * Complete Stripe checkout integration for $29 hair analysis
+ * February 18, 2026
  */
 
-class StrandlyPaymentManager {
+class StrandlyPaymentIntegration {
     constructor() {
-        this.apiService = new StrandlyApiService();
         this.stripe = null;
+        this.elements = null;
+        this.cardElement = null;
         this.isProcessing = false;
+        this.quizId = null;
         
-        console.log('💳 Payment Manager initialized');
+        console.log('💳 Payment Integration initialized');
     }
 
     /**
-     * Initialize Stripe and payment forms
+     * Initialize the payment system
      */
     async initialize() {
         try {
-            // Initialize Stripe (will be loaded from external script)
+            // Get quiz ID from URL or localStorage
+            this.quizId = this.getQuizId();
+            if (!this.quizId) {
+                throw new Error('No quiz ID found. Please complete the quiz first.');
+            }
+
+            // Initialize Stripe
             await this.initializeStripe();
             
-            // Setup payment buttons
-            this.setupPaymentButtons();
+            // Setup form handlers
+            this.setupFormHandlers();
             
-            // Setup pricing display
-            this.updatePricingDisplay();
-            
-            console.log('✅ Payment Manager ready');
+            console.log('✅ Payment system initialized successfully');
             return true;
+
         } catch (error) {
-            console.error('❌ Payment Manager initialization failed:', error);
+            console.error('❌ Payment initialization failed:', error);
+            this.showError(error.message);
             return false;
         }
     }
 
     /**
-     * Initialize Stripe instance
+     * Get quiz ID from URL parameters or localStorage
+     */
+    getQuizId() {
+        // Try URL first
+        const urlParams = new URLSearchParams(window.location.search);
+        let quizId = urlParams.get('quiz_id');
+        
+        // Fallback to localStorage
+        if (!quizId) {
+            quizId = localStorage.getItem('strandly_quiz_id');
+        }
+        
+        console.log('📋 Quiz ID:', quizId);
+        return quizId;
+    }
+
+    /**
+     * Initialize Stripe with Elements
      */
     async initializeStripe() {
-        // Wait for Stripe to be loaded
-        let attempts = 0;
-        while (typeof Stripe === 'undefined' && attempts < 30) {
-            await new Promise(resolve => setTimeout(resolve, 100));
-            attempts++;
-        }
+        try {
+            // Check if Stripe is loaded
+            if (typeof Stripe === 'undefined') {
+                throw new Error('Stripe.js failed to load. Please check your connection.');
+            }
 
-        if (typeof Stripe === 'undefined') {
-            throw new Error('Stripe library not loaded');
-        }
+            // Get publishable key from config
+            const publishableKey = window.StrandlyConfig?.STRIPE?.publishableKey;
+            if (!publishableKey) {
+                throw new Error('Stripe publishable key not configured');
+            }
 
-        // Initialize with publishable key (environment-specific)
-        const publishableKey = this.getStripePublishableKey();
-        this.stripe = Stripe(publishableKey);
-        
-        console.log('🔗 Stripe initialized');
-    }
-
-    /**
-     * Get Stripe publishable key based on environment
-     */
-    getStripePublishableKey() {
-        // Production key for live domain
-        if (window.location.hostname.includes('strandly') && !window.location.hostname.includes('netlify')) {
-            return 'pk_live_YOUR_LIVE_KEY_HERE'; // Replace with actual live key
-        }
-        
-        // Test key for development/staging
-        return 'pk_test_51234567890abcdef'; // Replace with actual test key
-    }
-
-    /**
-     * Setup payment buttons
-     */
-    setupPaymentButtons() {
-        // Purchase analysis buttons
-        const purchaseButtons = document.querySelectorAll('.purchase-analysis-btn, [data-action="purchase"]');
-        purchaseButtons.forEach(button => {
-            button.addEventListener('click', (event) => {
-                event.preventDefault();
-                this.handlePurchaseClick(button);
-            });
-        });
-
-        // Upgrade subscription buttons
-        const upgradeButtons = document.querySelectorAll('.upgrade-plan-btn, [data-action="upgrade"]');
-        upgradeButtons.forEach(button => {
-            button.addEventListener('click', (event) => {
-                event.preventDefault();
-                this.handleUpgradeClick(button);
-            });
-        });
-    }
-
-    /**
-     * Update pricing display
-     */
-    updatePricingDisplay() {
-        const pricing = this.getPricingInfo();
-        
-        // Update price elements
-        const priceElements = document.querySelectorAll('.analysis-price');
-        priceElements.forEach(el => {
-            el.textContent = pricing.analysis.display;
-        });
-
-        // Update subscription prices
-        const subscriptionElements = document.querySelectorAll('.subscription-price');
-        subscriptionElements.forEach(el => {
-            const plan = el.dataset.plan || 'monthly';
-            el.textContent = pricing.subscription[plan]?.display || '$9.99/month';
-        });
-    }
-
-    /**
-     * Get pricing information
-     */
-    getPricingInfo() {
-        return {
-            analysis: {
-                amount: 2900, // $29.00 in cents
-                currency: 'usd',
-                display: '$29.00'
-            },
-            subscription: {
-                monthly: {
-                    amount: 999, // $9.99 in cents
-                    currency: 'usd',
-                    display: '$9.99/month'
-                },
-                annual: {
-                    amount: 9999, // $99.99 in cents (save 17%)
-                    currency: 'usd',
-                    display: '$99.99/year'
+            // Initialize Stripe
+            this.stripe = Stripe(publishableKey);
+            
+            // Create Elements instance
+            this.elements = this.stripe.elements({
+                appearance: {
+                    theme: 'stripe',
+                    variables: {
+                        colorPrimary: '#667eea',
+                        colorBackground: '#ffffff',
+                        colorText: '#495057',
+                        colorDanger: '#dc3545',
+                        fontFamily: 'Inter, system-ui, sans-serif',
+                        spacingUnit: '4px',
+                        borderRadius: '8px',
+                    }
                 }
-            }
-        };
+            });
+
+            // Create and mount card element
+            this.cardElement = this.elements.create('card', {
+                style: {
+                    base: {
+                        fontSize: '16px',
+                        color: '#495057',
+                        '::placeholder': {
+                            color: '#6c757d',
+                        },
+                    },
+                    invalid: {
+                        color: '#dc3545',
+                        iconColor: '#dc3545'
+                    }
+                }
+            });
+
+            // Mount the card element
+            this.cardElement.mount('#card-element');
+
+            // Handle real-time validation errors from the card Element
+            this.cardElement.on('change', ({error}) => {
+                const displayError = document.getElementById('card-errors');
+                if (error) {
+                    displayError.textContent = error.message;
+                    displayError.style.display = 'block';
+                } else {
+                    displayError.textContent = '';
+                    displayError.style.display = 'none';
+                }
+            });
+
+            // Handle focus/blur for styling
+            this.cardElement.on('focus', () => {
+                document.getElementById('card-element').classList.add('focused');
+            });
+
+            this.cardElement.on('blur', () => {
+                document.getElementById('card-element').classList.remove('focused');
+            });
+
+            console.log('✅ Stripe Elements initialized');
+
+        } catch (error) {
+            console.error('❌ Stripe initialization error:', error);
+            throw error;
+        }
     }
 
     /**
-     * Handle purchase analysis button click
+     * Setup form event handlers
      */
-    async handlePurchaseClick(button) {
-        if (this.isProcessing) return;
+    setupFormHandlers() {
+        const form = document.getElementById('payment-form');
+        const submitButton = document.getElementById('submit-payment');
 
-        console.log('💳 Processing analysis purchase');
+        if (!form || !submitButton) {
+            throw new Error('Payment form elements not found');
+        }
+
+        // Handle form submission
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            this.handlePaymentSubmission();
+        });
+
+        console.log('📝 Form handlers setup complete');
+    }
+
+    /**
+     * Handle payment submission
+     */
+    async handlePaymentSubmission() {
+        if (this.isProcessing) {
+            console.log('Payment already processing...');
+            return;
+        }
+
         this.isProcessing = true;
+        this.updateButtonState(true);
 
         try {
-            // Show loading state
-            this.setButtonLoading(button, true);
+            console.log('💳 Starting payment process...');
 
-            // Get quiz results (either from localStorage or API)
-            const quizResults = await this.getQuizResults();
-            if (!quizResults) {
-                throw new Error('No quiz results found. Please take the quiz first.');
-            }
-
-            // Create checkout session
-            const checkoutSession = await this.createCheckoutSession({
-                type: 'analysis',
-                quizResultId: quizResults.id,
-                successUrl: window.location.origin + '/analysis-complete.html',
-                cancelUrl: window.location.href
-            });
-
-            // Redirect to Stripe Checkout
-            const { error } = await this.stripe.redirectToCheckout({
-                sessionId: checkoutSession.id
-            });
-
-            if (error) {
-                throw error;
+            // Method 1: Try Payment Intent first (more control)
+            try {
+                await this.processPaymentIntent();
+                return;
+            } catch (intentError) {
+                console.log('Payment Intent failed, trying Checkout Session...', intentError.message);
+                
+                // Method 2: Fallback to Checkout Session
+                await this.processCheckoutSession();
             }
 
         } catch (error) {
-            console.error('❌ Purchase failed:', error);
-            this.handlePaymentError(error);
+            console.error('❌ Payment processing failed:', error);
+            this.showError('Payment failed: ' + error.message);
         } finally {
             this.isProcessing = false;
-            this.setButtonLoading(button, false);
+            this.updateButtonState(false);
         }
     }
 
     /**
-     * Handle upgrade subscription button click
+     * Process payment using Payment Intent
      */
-    async handleUpgradeClick(button) {
-        if (this.isProcessing) return;
+    async processPaymentIntent() {
+        // Create payment intent
+        const response = await fetch(`${window.StrandlyConfig.getApiUrl()}/api/payment/create-intent`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                quizId: this.quizId,
+                amount: 2900, // $29.00
+                currency: 'usd'
+            }),
+        });
 
-        console.log('📈 Processing subscription upgrade');
-        this.isProcessing = true;
+        if (!response.ok) {
+            throw new Error(`Server error: ${response.status}`);
+        }
 
-        try {
-            // Show loading state
-            this.setButtonLoading(button, true);
+        const { clientSecret } = await response.json();
 
-            // Check authentication
-            if (!this.apiService.isAuthenticated()) {
-                throw new Error('Please log in to upgrade your subscription');
+        // Confirm payment with Stripe
+        const { error, paymentIntent } = await this.stripe.confirmCardPayment(clientSecret, {
+            payment_method: {
+                card: this.cardElement,
             }
+        });
 
-            const plan = button.dataset.plan || 'monthly';
-
-            // Create subscription checkout session
-            const checkoutSession = await this.createCheckoutSession({
-                type: 'subscription',
-                plan: plan,
-                successUrl: window.location.origin + '/subscription-complete.html',
-                cancelUrl: window.location.href
-            });
-
-            // Redirect to Stripe Checkout
-            const { error } = await this.stripe.redirectToCheckout({
-                sessionId: checkoutSession.id
-            });
-
-            if (error) {
-                throw error;
-            }
-
-        } catch (error) {
-            console.error('❌ Subscription upgrade failed:', error);
-            this.handlePaymentError(error);
-        } finally {
-            this.isProcessing = false;
-            this.setButtonLoading(button, false);
-        }
-    }
-
-    /**
-     * Create Stripe checkout session via API
-     */
-    async createCheckoutSession(options) {
-        try {
-            console.log('🔗 Creating Stripe checkout session:', options);
-
-            // This would call your backend API
-            const response = await this.apiService.apiRequest('/payments/create-checkout-session', {
-                method: 'POST',
-                body: JSON.stringify(options)
-            });
-
-            return response.checkoutSession;
-
-        } catch (error) {
-            console.error('Failed to create checkout session:', error);
-            throw new Error('Failed to initialize payment. Please try again.');
-        }
-    }
-
-    /**
-     * Get quiz results from localStorage or API
-     */
-    async getQuizResults() {
-        // First try localStorage (for recent quiz)
-        const localResults = localStorage.getItem('strandly_quiz_results');
-        if (localResults) {
-            try {
-                return JSON.parse(localResults);
-            } catch (error) {
-                console.warn('Failed to parse local quiz results');
-            }
+        if (error) {
+            throw error;
         }
 
-        // If authenticated, try to get from API
-        if (this.apiService.isAuthenticated()) {
-            try {
-                const user = this.apiService.getCurrentUser();
-                const response = await this.apiService.getQuizResult(user.id);
-                return response.results;
-            } catch (error) {
-                console.warn('Failed to fetch quiz results from API:', error);
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Handle payment processing success
-     */
-    handlePaymentSuccess(sessionId) {
-        console.log('🎉 Payment successful:', sessionId);
-
-        // Clear any temporary data
-        localStorage.removeItem('strandly_pending_payment');
-
-        // Show success message
-        this.showSuccessMessage('Payment successful! Redirecting to your results...');
-
-        // The success URL will handle the actual redirect
-    }
-
-    /**
-     * Handle payment errors
-     */
-    handlePaymentError(error) {
-        let errorMessage = 'Payment failed. Please try again.';
-        
-        if (error.message.includes('quiz results')) {
-            errorMessage = 'Please complete the hair quiz before purchasing your analysis.';
-        } else if (error.message.includes('log in')) {
-            errorMessage = 'Please log in to continue with your purchase.';
-        } else if (error.type === 'card_error') {
-            errorMessage = `Payment failed: ${error.message}`;
-        } else if (error.type === 'validation_error') {
-            errorMessage = error.message;
-        }
-
-        this.showErrorMessage(errorMessage);
-    }
-
-    /**
-     * Set button loading state
-     */
-    setButtonLoading(button, isLoading) {
-        button.disabled = isLoading;
-        
-        if (isLoading) {
-            button.dataset.originalText = button.textContent;
-            button.innerHTML = '<span class="spinner"></span> Processing...';
-            button.classList.add('loading');
+        if (paymentIntent.status === 'succeeded') {
+            console.log('✅ Payment succeeded via Payment Intent');
+            this.handlePaymentSuccess(paymentIntent.id);
         } else {
-            button.textContent = button.dataset.originalText || 'Purchase Analysis';
-            button.classList.remove('loading');
+            throw new Error('Payment not completed');
+        }
+    }
+
+    /**
+     * Process payment using Checkout Session (fallback)
+     */
+    async processCheckoutSession() {
+        console.log('🔄 Creating checkout session...');
+
+        const response = await fetch(`${window.StrandlyConfig.getApiUrl()}/api/payment/create-checkout`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                quizId: this.quizId
+            }),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.details || `Server error: ${response.status}`);
+        }
+
+        const { sessionId, url } = await response.json();
+
+        if (url) {
+            console.log('🔄 Redirecting to Stripe Checkout...');
+            window.location.href = url;
+        } else if (sessionId) {
+            // Use sessionId with redirectToCheckout
+            const { error } = await this.stripe.redirectToCheckout({
+                sessionId: sessionId
+            });
+
+            if (error) {
+                throw error;
+            }
+        } else {
+            throw new Error('No payment URL or session ID received');
+        }
+    }
+
+    /**
+     * Handle successful payment
+     */
+    handlePaymentSuccess(paymentId) {
+        console.log('🎉 Payment successful!', paymentId);
+        
+        // Show success message
+        this.showSuccess('Payment successful! Redirecting...');
+        
+        // Redirect to success page after a short delay
+        setTimeout(() => {
+            window.location.href = `success.html?payment_id=${paymentId}&quiz_id=${this.quizId}`;
+        }, 2000);
+    }
+
+    /**
+     * Update button state during processing
+     */
+    updateButtonState(isProcessing) {
+        const button = document.getElementById('submit-payment');
+        const buttonText = button.querySelector('.button-text');
+        const spinner = button.querySelector('.loading-spinner');
+
+        if (isProcessing) {
+            button.disabled = true;
+            buttonText.textContent = 'Processing...';
+            spinner.style.display = 'inline-block';
+        } else {
+            button.disabled = false;
+            buttonText.textContent = 'Complete Payment - $29';
+            spinner.style.display = 'none';
+        }
+    }
+
+    /**
+     * Show error message
+     */
+    showError(message) {
+        const errorDiv = document.getElementById('card-errors');
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        
+        // Also show alert for critical errors
+        if (message.includes('quiz') || message.includes('configuration')) {
+            alert('Error: ' + message);
         }
     }
 
     /**
      * Show success message
      */
-    showSuccessMessage(message) {
-        this.showMessage(message, 'success');
-    }
-
-    /**
-     * Show error message
-     */
-    showErrorMessage(message) {
-        this.showMessage(message, 'error');
-    }
-
-    /**
-     * Show message to user
-     */
-    showMessage(message, type = 'info') {
-        // Create or get message element
-        let messageEl = document.getElementById('payment-message');
-        
-        if (!messageEl) {
-            messageEl = document.createElement('div');
-            messageEl.id = 'payment-message';
-            messageEl.className = 'payment-message';
-            document.body.appendChild(messageEl);
-        }
-
-        messageEl.textContent = message;
-        messageEl.className = `payment-message ${type} show`;
-
-        // Auto-hide after 5 seconds for success messages
-        if (type === 'success') {
-            setTimeout(() => {
-                messageEl.classList.remove('show');
-            }, 5000);
-        }
-    }
-
-    /**
-     * Process successful payment from redirect
-     */
-    async processPaymentSuccess() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const sessionId = urlParams.get('session_id');
-        
-        if (!sessionId) return false;
-
-        try {
-            console.log('✅ Processing payment success callback');
-
-            // Verify payment with backend
-            const response = await this.apiService.apiRequest('/payments/verify-session', {
-                method: 'POST',
-                body: JSON.stringify({ sessionId })
-            });
-
-            if (response.status === 'complete') {
-                this.handlePaymentSuccess(sessionId);
-                return true;
-            } else {
-                throw new Error('Payment verification failed');
-            }
-
-        } catch (error) {
-            console.error('❌ Payment verification failed:', error);
-            this.handlePaymentError(error);
-            return false;
-        }
-    }
-
-    /**
-     * Initialize payment success handling for success pages
-     */
-    initializeSuccessPage() {
-        // Auto-process payment success if we're on a success page
-        if (window.location.pathname.includes('complete.html')) {
-            this.processPaymentSuccess();
-        }
+    showSuccess(message) {
+        // Create success overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'success-overlay';
+        overlay.innerHTML = `
+            <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 10000;">
+                <div style="background: white; padding: 2rem; border-radius: 12px; text-align: center; max-width: 400px;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🎉</div>
+                    <h2 style="margin: 0 0 1rem 0; color: #28a745;">Payment Successful!</h2>
+                    <p style="margin: 0; color: #6c757d;">${message}</p>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
     }
 }
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', async function() {
-    console.log('🚀 Initializing Payment Manager');
+    console.log('🚀 Initializing payment integration...');
     
-    const paymentManager = new StrandlyPaymentManager();
-    await paymentManager.initialize();
-    
-    // Initialize success page handling
-    paymentManager.initializeSuccessPage();
-    
-    // Make globally accessible
-    window.strandlyPayments = paymentManager;
+    // Wait for config to be loaded
+    const waitForConfig = () => {
+        return new Promise((resolve) => {
+            if (window.StrandlyConfig) {
+                resolve();
+            } else {
+                setTimeout(() => waitForConfig().then(resolve), 100);
+            }
+        });
+    };
+
+    await waitForConfig();
+
+    // Initialize payment integration
+    const paymentIntegration = new StrandlyPaymentIntegration();
+    const initialized = await paymentIntegration.initialize();
+
+    if (initialized) {
+        console.log('✅ Payment integration ready');
+        window.strandlyPayment = paymentIntegration;
+    } else {
+        console.error('❌ Failed to initialize payment integration');
+    }
 });

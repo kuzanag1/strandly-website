@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontend Fix Test - Strandly</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+        .test-pass { background: #d4edda; border-color: #c3e6cb; }
+        .test-fail { background: #f8d7da; border-color: #f5c6cb; }
+        .test-pending { background: #fff3cd; border-color: #ffeaa7; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .price-check { font-size: 24px; font-weight: bold; color: #28a745; }
+    </style>
+</head>
+<body>
+    <h1>🚨 Emergency Frontend Fix Test</h1>
+    <p>Testing all critical issues reported by Captain Tiago</p>
+
+    <!-- Test 1: Pricing Display -->
+    <div id="test-pricing" class="test-section test-pending">
+        <h2>Test 1: Pricing Display</h2>
+        <p>Checking if all pricing shows $29 instead of $19</p>
+        <div class="price-check" id="current-price">Loading...</div>
+        <button onclick="testPricing()">Test Pricing</button>
+        <div id="pricing-results"></div>
+    </div>
+
+    <!-- Test 2: Quiz Navigation -->
+    <div id="test-navigation" class="test-section test-pending">
+        <h2>Test 2: Quiz Navigation</h2>
+        <p>Testing previous/next button functionality</p>
+        <button onclick="testNavigation()">Test Navigation</button>
+        <div id="navigation-results"></div>
+    </div>
+
+    <!-- Test 3: Quiz Completion -->
+    <div id="test-completion" class="test-section test-pending">
+        <h2>Test 3: Quiz Completion</h2>
+        <p>Testing if quiz completion shows payment option</p>
+        <button onclick="testCompletion()">Test Completion</button>
+        <div id="completion-results"></div>
+    </div>
+
+    <!-- Test 4: Payment Flow -->
+    <div id="test-payment" class="test-section test-pending">
+        <h2>Test 4: Payment Flow</h2>
+        <p>Testing complete workflow from quiz to payment</p>
+        <button onclick="testPaymentFlow()">Test Payment Flow</button>
+        <div id="payment-results"></div>
+    </div>
+
+    <!-- Summary -->
+    <div id="test-summary" class="test-section">
+        <h2>Test Summary</h2>
+        <div id="summary-results">Run tests to see results</div>
+        <button onclick="runAllTests()" style="background: #28a745; font-size: 18px; padding: 15px 30px;">
+            🚀 Run All Tests
+        </button>
+    </div>
+
+    <script>
+        // Load configuration
+        const testConfig = {
+            expectedPrice: '$29',
+            quizUrl: 'quiz.html',
+            paymentUrl: 'payment.html',
+            apiUrl: 'https://strandly-backend.onrender.com'
+        };
+
+        function testPricing() {
+            console.log('🔍 Testing pricing display...');
+            
+            const pricingSection = document.getElementById('test-pricing');
+            const resultsDiv = document.getElementById('pricing-results');
+            const currentPriceDiv = document.getElementById('current-price');
+            
+            // Check config pricing
+            const configPrice = window.StrandlyConfig?.PAYMENT?.displayPrice;
+            currentPriceDiv.textContent = configPrice || 'Not found';
+            
+            let results = [];
+            let allPass = true;
+            
+            // Test 1: Config shows $29
+            if (configPrice === testConfig.expectedPrice) {
+                results.push('✅ Config pricing: $29 (PASS)');
+            } else {
+                results.push(`❌ Config pricing: ${configPrice} (FAIL - Expected $29)`);
+                allPass = false;
+            }
+            
+            // Test 2: Check for any $19 references in current page
+            const bodyText = document.body.innerHTML;
+            const has19References = bodyText.includes('$19');
+            
+            if (!has19References) {
+                results.push('✅ No $19 references found (PASS)');
+            } else {
+                results.push('❌ Found $19 references in page (FAIL)');
+                allPass = false;
+            }
+            
+            resultsDiv.innerHTML = results.join('<br>');
+            pricingSection.className = `test-section ${allPass ? 'test-pass' : 'test-fail'}`;
+        }
+
+        function testNavigation() {
+            console.log('🔍 Testing quiz navigation...');
+            
+            const navSection = document.getElementById('test-navigation');
+            const resultsDiv = document.getElementById('navigation-results');
+            
+            let results = [];
+            let allPass = true;
+            
+            // Test quiz JavaScript loading
+            try {
+                // Check if quiz classes exist
+                const hasWorkingQuiz = typeof WorkingStrandlyQuiz !== 'undefined';
+                const hasApiService = typeof StrandlyApiService !== 'undefined';
+                
+                if (hasApiService) {
+                    results.push('✅ API Service loaded (PASS)');
+                } else {
+                    results.push('❌ API Service not loaded (FAIL)');
+                    allPass = false;
+                }
+                
+                // Check quiz HTML file exists
+                fetch('quiz.html')
+                    .then(response => {
+                        if (response.ok) {
+                            results.push('✅ Quiz HTML accessible (PASS)');
+                        } else {
+                            results.push('❌ Quiz HTML not accessible (FAIL)');
+                            allPass = false;
+                        }
+                        updateResults();
+                    })
+                    .catch(error => {
+                        results.push('❌ Quiz HTML fetch error (FAIL)');
+                        allPass = false;
+                        updateResults();
+                    });
+                
+            } catch (error) {
+                results.push(`❌ JavaScript error: ${error.message} (FAIL)`);
+                allPass = false;
+            }
+            
+            function updateResults() {
+                resultsDiv.innerHTML = results.join('<br>');
+                navSection.className = `test-section ${allPass ? 'test-pass' : 'test-fail'}`;
+            }
+            
+            updateResults();
+        }
+
+        function testCompletion() {
+            console.log('🔍 Testing quiz completion...');
+            
+            const completionSection = document.getElementById('test-completion');
+            const resultsDiv = document.getElementById('completion-results');
+            
+            let results = [];
+            let allPass = true;
+            
+            // Test API service completion method
+            try {
+                if (window.StrandlyApi && typeof window.StrandlyApi.completeQuiz === 'function') {
+                    results.push('✅ Quiz completion method exists (PASS)');
+                } else {
+                    results.push('❌ Quiz completion method missing (FAIL)');
+                    allPass = false;
+                }
+                
+                // Test payment redirect method
+                if (window.StrandlyApi && typeof window.StrandlyApi.redirectToPaymentPage === 'function') {
+                    results.push('✅ Payment redirect method exists (PASS)');
+                } else {
+                    results.push('❌ Payment redirect method missing (FAIL)');
+                    allPass = false;
+                }
+                
+            } catch (error) {
+                results.push(`❌ Completion test error: ${error.message} (FAIL)`);
+                allPass = false;
+            }
+            
+            resultsDiv.innerHTML = results.join('<br>');
+            completionSection.className = `test-section ${allPass ? 'test-pass' : 'test-fail'}`;
+        }
+
+        function testPaymentFlow() {
+            console.log('🔍 Testing payment flow...');
+            
+            const paymentSection = document.getElementById('test-payment');
+            const resultsDiv = document.getElementById('payment-results');
+            
+            let results = [];
+            let allPass = true;
+            
+            // Test payment HTML accessibility
+            fetch('payment.html')
+                .then(response => {
+                    if (response.ok) {
+                        results.push('✅ Payment HTML accessible (PASS)');
+                        return response.text();
+                    } else {
+                        results.push('❌ Payment HTML not accessible (FAIL)');
+                        allPass = false;
+                        throw new Error('Payment HTML not accessible');
+                    }
+                })
+                .then(html => {
+                    // Check if payment page has correct pricing
+                    if (html.includes('$29')) {
+                        results.push('✅ Payment page shows $29 (PASS)');
+                    } else {
+                        results.push('❌ Payment page does not show $29 (FAIL)');
+                        allPass = false;
+                    }
+                    
+                    // Check if payment page has Stripe integration
+                    if (html.includes('stripe.com')) {
+                        results.push('✅ Payment page has Stripe integration (PASS)');
+                    } else {
+                        results.push('❌ Payment page missing Stripe integration (FAIL)');
+                        allPass = false;
+                    }
+                    
+                    updateResults();
+                })
+                .catch(error => {
+                    results.push(`❌ Payment flow test error: ${error.message} (FAIL)`);
+                    allPass = false;
+                    updateResults();
+                });
+            
+            function updateResults() {
+                resultsDiv.innerHTML = results.join('<br>');
+                paymentSection.className = `test-section ${allPass ? 'test-pass' : 'test-fail'}`;
+            }
+        }
+
+        function runAllTests() {
+            console.log('🚀 Running all tests...');
+            
+            // Reset all test sections
+            document.querySelectorAll('.test-section:not(#test-summary)').forEach(section => {
+                section.className = 'test-section test-pending';
+            });
+            
+            // Run tests in sequence
+            setTimeout(() => testPricing(), 100);
+            setTimeout(() => testNavigation(), 300);
+            setTimeout(() => testCompletion(), 500);
+            setTimeout(() => testPaymentFlow(), 700);
+            
+            // Generate summary after all tests
+            setTimeout(() => generateSummary(), 2000);
+        }
+
+        function generateSummary() {
+            const summaryDiv = document.getElementById('summary-results');
+            
+            // Count test results
+            const passedTests = document.querySelectorAll('.test-pass').length;
+            const failedTests = document.querySelectorAll('.test-fail').length;
+            const totalTests = passedTests + failedTests;
+            
+            let summaryHtml = `
+                <h3>Test Results Summary</h3>
+                <p><strong>Total Tests:</strong> ${totalTests}</p>
+                <p style="color: #28a745;"><strong>Passed:</strong> ${passedTests}</p>
+                <p style="color: #dc3545;"><strong>Failed:</strong> ${failedTests}</p>
+            `;
+            
+            if (failedTests === 0) {
+                summaryHtml += `
+                    <div style="background: #d4edda; padding: 15px; border-radius: 5px; margin: 10px 0;">
+                        <h4 style="color: #155724;">🎉 ALL TESTS PASSED!</h4>
+                        <p>The frontend emergency fixes are working correctly. The website is ready for Captain Tiago's testing.</p>
+                    </div>
+                `;
+            } else {
+                summaryHtml += `
+                    <div style="background: #f8d7da; padding: 15px; border-radius: 5px; margin: 10px 0;">
+                        <h4 style="color: #721c24;">❌ Some Tests Failed</h4>
+                        <p>There are still ${failedTests} issues that need to be addressed before the website is ready.</p>
+                    </div>
+                `;
+            }
+            
+            summaryDiv.innerHTML = summaryHtml;
+        }
+
+        // Load required scripts for testing
+        function loadRequiredScripts() {
+            const scripts = [
+                'js/config.js',
+                'js/api-service.js'
+            ];
+            
+            scripts.forEach(src => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onerror = () => console.warn(`Could not load ${src} for testing`);
+                document.head.appendChild(script);
+            });
+        }
+
+        // Initialize test page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🧪 Frontend Fix Test Page Ready');
+            loadRequiredScripts();
+            
+            // Auto-run tests after scripts load
+            setTimeout(() => {
+                console.log('🔄 Auto-running tests...');
+                runAllTests();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

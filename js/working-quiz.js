@@ -132,6 +132,8 @@ class WorkingStrandlyQuiz {
      */
     initialize() {
         try {
+            console.log('🚀 Initializing quiz...');
+            
             // Get DOM elements
             this.questionTextEl = document.getElementById('question-text');
             this.questionOptionsEl = document.getElementById('question-options');
@@ -140,13 +142,34 @@ class WorkingStrandlyQuiz {
             this.questionCounterEl = document.getElementById('question-counter');
             this.progressFillEl = document.getElementById('progress-fill');
             
+            console.log('📋 DOM Elements found:');
+            console.log('   question-text:', !!this.questionTextEl);
+            console.log('   question-options:', !!this.questionOptionsEl);
+            console.log('   prev-btn:', !!this.prevButtonEl);
+            console.log('   next-btn:', !!this.nextButtonEl);
+            console.log('   question-counter:', !!this.questionCounterEl);
+            console.log('   progress-fill:', !!this.progressFillEl);
+            
             if (!this.questionTextEl || !this.questionOptionsEl || !this.prevButtonEl || !this.nextButtonEl) {
                 throw new Error('Required quiz elements not found');
             }
             
-            // Bind event handlers
-            this.prevButtonEl.addEventListener('click', () => this.goToPreviousQuestion());
-            this.nextButtonEl.addEventListener('click', () => this.handleNextClick());
+            // Bind event handlers with explicit debugging
+            console.log('🔗 Binding event handlers...');
+            
+            this.prevButtonEl.addEventListener('click', (e) => {
+                console.log('🔙 Previous button CLICKED');
+                e.preventDefault();
+                this.goToPreviousQuestion();
+            });
+            
+            this.nextButtonEl.addEventListener('click', (e) => {
+                console.log('➡️ Next button CLICKED');
+                e.preventDefault();
+                this.handleNextClick();
+            });
+            
+            console.log('✅ Event handlers bound successfully');
             
             // Load saved progress if exists
             this.loadSavedProgress();
@@ -154,10 +177,11 @@ class WorkingStrandlyQuiz {
             // Display first question
             this.displayCurrentQuestion();
             
+            console.log('✅ Quiz initialized successfully');
             return true;
             
         } catch (error) {
-            console.error('Quiz initialization failed:', error);
+            console.error('❌ Quiz initialization failed:', error);
             return false;
         }
     }
@@ -393,22 +417,31 @@ class WorkingStrandlyQuiz {
      * Update navigation button states
      */
     updateNavigationButtons() {
+        console.log(`🔄 Updating navigation buttons...`);
+        console.log(`   Current question: ${this.currentQuestionIndex + 1}/${this.totalQuestions}`);
+        console.log(`   Is submitting: ${this.isSubmitting}`);
+        
         // Previous button: disabled on first question
         this.prevButtonEl.disabled = (this.currentQuestionIndex === 0);
+        console.log(`   Previous button disabled: ${this.prevButtonEl.disabled}`);
         
         // Next button: disabled if no valid answer, show different text on last question
         const hasAnswer = this.hasValidAnswer();
         this.nextButtonEl.disabled = !hasAnswer || this.isSubmitting;
+        console.log(`   Has valid answer: ${hasAnswer}`);
+        console.log(`   Next button disabled: ${this.nextButtonEl.disabled}`);
         
         if (this.isLastQuestion()) {
             this.nextButtonEl.textContent = this.isSubmitting ? 'Processing...' : 'Get My Analysis ($29)';
             this.nextButtonEl.classList.add('cta-button');
+            console.log(`   🎯 LAST QUESTION - Button text: "${this.nextButtonEl.textContent}"`);
         } else {
             this.nextButtonEl.textContent = 'Next';
             this.nextButtonEl.classList.remove('cta-button');
+            console.log(`   ➡️ Regular question - Button text: "${this.nextButtonEl.textContent}"`);
         }
         
-        console.log(`Navigation updated: prev=${!this.prevButtonEl.disabled}, next=${!this.nextButtonEl.disabled}, hasAnswer=${hasAnswer}`);
+        console.log(`✅ Navigation updated: prev=${!this.prevButtonEl.disabled}, next=${!this.nextButtonEl.disabled}, hasAnswer=${hasAnswer}`);
     }
     
     /**
@@ -428,10 +461,17 @@ class WorkingStrandlyQuiz {
      * Go to previous question
      */
     goToPreviousQuestion() {
+        console.log(`🔙 Previous button clicked. Current index: ${this.currentQuestionIndex}, isSubmitting: ${this.isSubmitting}`);
+        
         if (this.currentQuestionIndex > 0 && !this.isSubmitting) {
             this.currentQuestionIndex--;
             console.log(`⬅️ Moved to question ${this.currentQuestionIndex + 1}`);
             this.displayCurrentQuestion();
+            
+            // Force button state update
+            this.updateNavigationButtons();
+        } else {
+            console.log(`❌ Cannot go back - index: ${this.currentQuestionIndex}, submitting: ${this.isSubmitting}`);
         }
     }
     
