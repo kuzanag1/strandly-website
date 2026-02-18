@@ -17,7 +17,7 @@ const StrandlyConfig = {
     
     // Stripe Configuration
     STRIPE: {
-        publishableKey: 'pk_test_51QWRmyJnWO5wX7c0pJD5CY8VL7jGBxCt8g4cCzNkGbFgZfkuQLGCEr1BCJ4Q7Fs46PYxzv3BNeFhNsm7O4lQk5N500pnq2x5MB', // Test key
+        publishableKey: 'pk_test_51RTTQk07mG2JMZSa1rD5kC1tTqIqn0MDY3RjL4083yt0MxUVkA0alm5uQtfoPyAbr5t2tSoGDhLBSRE35PVyNCUj00ihSI35bo', // Updated test key
         // publishableKey: 'pk_live_YOUR_LIVE_KEY_HERE', // Production key
     },
     
