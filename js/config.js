@@ -17,7 +17,7 @@ const StrandlyConfig = {
     
     // Stripe Configuration
     STRIPE: {
-        publishableKey: 'pk_test_51QWRmyJnWO5wX7c0pJD5CY8VL7jGBxCt8g4cCzNkGbFgZfkuQLGCEr1BCJ4Q7Fs46PYxzv3BNeFhNsm7O4lQk5N500pnq2x5MB', // Test key matching backend
+        publishableKey: 'pk_test_TYooMQauvdEDq54NiTphI7jx', // Test key matching backend
         // publishableKey: 'pk_live_YOUR_LIVE_KEY_HERE', // Production key
     },
     
@@ -30,13 +30,17 @@ const StrandlyConfig = {
     // Environment Detection
     isDevelopment: () => {
         return window.location.hostname === 'localhost' || 
-               window.location.hostname.includes('127.0.0.1') ||
-               window.location.hostname.includes('netlify.app');
+               window.location.hostname.includes('127.0.0.1');
     },
     
     // Get appropriate API URL
     getApiUrl: () => {
-        // For development/testing, use local mock server
+        // For local development, use local backend
+        if (window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1')) {
+            return 'http://localhost:5000';
+        }
+        
+        // For development/testing, use deployed backend  
         if (StrandlyConfig.isDevelopment()) {
             return StrandlyConfig.API_BASE_URL;
         }
