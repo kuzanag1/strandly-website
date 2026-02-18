@@ -227,8 +227,20 @@ class WorkingStrandlyQuiz {
         emailInput.type = 'email';
         emailInput.id = 'email-input';
         emailInput.placeholder = question.placeholder;
-        emailInput.className = 'email-input';
+        emailInput.className = 'quiz-option-btn email-input'; // Match button styling
         emailInput.required = question.required;
+        emailInput.style.cssText = `
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+            font-size: 16px;
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            margin: 8px 0;
+            background: white;
+            transition: all 0.3s ease;
+        `;
         
         // Set existing value if available
         if (this.userAnswers[question.id]) {
@@ -238,6 +250,19 @@ class WorkingStrandlyQuiz {
         // Add input event listener
         emailInput.addEventListener('input', (event) => {
             this.handleEmailInput(question.id, event.target.value);
+        });
+        
+        // Add focus styling
+        emailInput.addEventListener('focus', () => {
+            emailInput.style.borderColor = '#667eea';
+            emailInput.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.15)';
+        });
+        
+        emailInput.addEventListener('blur', () => {
+            if (!this.isValidEmail(emailInput.value)) {
+                emailInput.style.borderColor = '#e2e8f0';
+                emailInput.style.boxShadow = 'none';
+            }
         });
         
         inputContainer.appendChild(emailInput);
@@ -253,7 +278,8 @@ class WorkingStrandlyQuiz {
     renderChoiceOptions(question) {
         question.choices.forEach((choice, index) => {
             const optionDiv = document.createElement('div');
-            optionDiv.className = 'quiz-option';
+            // USE CORRECT CLASS NAME that matches CSS
+            optionDiv.className = 'quiz-option-btn';
             
             // Check if this choice is already selected
             if (this.isChoiceSelected(question.id, choice)) {
@@ -282,11 +308,11 @@ class WorkingStrandlyQuiz {
      */
     handleChoiceClick(event, question) {
         const selectedChoice = event.target.getAttribute('data-choice');
-        console.log(`Selected: ${selectedChoice} for question: ${question.id}`);
+        console.log(`✅ Selected: ${selectedChoice} for question: ${question.id}`);
         
         if (question.type === 'single-choice') {
-            // Single choice: clear other selections
-            this.questionOptionsEl.querySelectorAll('.quiz-option').forEach(option => {
+            // Single choice: clear other selections with CORRECT class selector
+            this.questionOptionsEl.querySelectorAll('.quiz-option-btn').forEach(option => {
                 option.classList.remove('selected');
             });
             event.target.classList.add('selected');
@@ -319,7 +345,7 @@ class WorkingStrandlyQuiz {
         this.updateNavigationButtons();
         this.saveProgress();
         
-        console.log('Current answers:', this.userAnswers);
+        console.log('📊 Current answers:', this.userAnswers);
     }
     
     /**
@@ -402,7 +428,7 @@ class WorkingStrandlyQuiz {
      * Go to previous question
      */
     goToPreviousQuestion() {
-        if (this.currentQuestionIndex > 0) {
+        if (this.currentQuestionIndex > 0 && !this.isSubmitting) {
             this.currentQuestionIndex--;
             console.log(`⬅️ Moved to question ${this.currentQuestionIndex + 1}`);
             this.displayCurrentQuestion();
@@ -442,6 +468,9 @@ class WorkingStrandlyQuiz {
         this.isSubmitting = true;
         this.updateNavigationButtons();
         
+        // Show loading state
+        this.showLoadingState();
+        
         // Validate we have all required answers
         const answeredCount = Object.keys(this.userAnswers).length;
         if (answeredCount < this.totalQuestions) {
@@ -464,7 +493,9 @@ class WorkingStrandlyQuiz {
         try {
             // Check if API service is available
             if (!window.StrandlyApi) {
-                throw new Error('API service not available');
+                console.warn('API service not available, redirecting directly to payment');
+                this.redirectToPayment();
+                return;
             }
             
             // Use the API service to complete the quiz
@@ -476,12 +507,49 @@ class WorkingStrandlyQuiz {
         } catch (error) {
             console.error('Quiz completion failed:', error);
             
-            // Show user-friendly error message
-            alert('We encountered an issue submitting your quiz. Please try again or contact support if the problem persists.');
-            
-            this.isSubmitting = false;
-            this.updateNavigationButtons();
+            // Fallback: redirect directly to payment page
+            console.log('Falling back to direct payment redirect');
+            this.redirectToPayment();
         }
+    }
+    
+    /**
+     * Show loading state during quiz completion
+     */
+    showLoadingState() {
+        this.questionTextEl.innerHTML = `
+            <div style="text-align: center; padding: 2rem;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🧬</div>
+                <h2>Analyzing Your Hair Profile...</h2>
+                <p>Processing your responses and preparing your personalized recommendations</p>
+                <div class="loading-dots">
+                    <span>●</span><span>●</span><span>●</span>
+                </div>
+            </div>
+        `;
+        this.questionOptionsEl.innerHTML = '';
+    }
+    
+    /**
+     * Direct redirect to payment as fallback
+     */
+    redirectToPayment() {
+        // Store answers for payment page
+        localStorage.setItem('strandly_quiz_answers', JSON.stringify(this.userAnswers));
+        localStorage.setItem('strandly_quiz_completed', 'true');
+        
+        // Show success message and redirect
+        this.questionTextEl.innerHTML = `
+            <div style="text-align: center; padding: 2rem;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
+                <h2>Quiz Complete!</h2>
+                <p>Redirecting to secure payment...</p>
+            </div>
+        `;
+        
+        setTimeout(() => {
+            window.location.href = 'payment.html';
+        }, 2000);
     }
 }
 
