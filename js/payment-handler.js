@@ -1,336 +1,263 @@
 /**
  * STRANDLY PAYMENT HANDLER
- * Stripe Elements Integration for Frontend Payment Processing
+ * Handles payment processing for $29 hair analysis
  * February 18, 2026
  */
 
 class StrandlyPaymentHandler {
     constructor() {
-        this.stripe = null;
-        this.elements = null;
-        this.cardElement = null;
-        this.clientSecret = null;
-        this.quizId = null;
         this.isProcessing = false;
+        this.stripe = null;
+        this.apiUrl = window.StrandlyConfig?.getApiUrl() || 'http://localhost:5003';
         
-        console.log('💳 Payment handler initialized');
+        console.log('💳 Payment Handler initialized with API:', this.apiUrl);
     }
 
     /**
-     * Initialize Stripe and payment form
+     * Initialize Stripe
      */
-    async initialize() {
+    async initializeStripe() {
         try {
-            // Get quiz ID from storage or URL
-            this.quizId = this.getQuizId();
-            if (!this.quizId) {
-                throw new Error('No quiz ID found. Please complete the quiz first.');
-            }
-
-            console.log('🆔 Quiz ID:', this.quizId);
-
-            // Initialize Stripe with config
-            if (!window.StrandlyConfig || !window.StrandlyConfig.stripe.publishableKey) {
-                throw new Error('Stripe configuration not found');
+            if (typeof Stripe === 'undefined') {
+                throw new Error('Stripe not loaded');
             }
             
-            this.stripe = Stripe(window.StrandlyConfig.stripe.publishableKey);
+            const publishableKey = window.StrandlyConfig?.STRIPE?.publishableKey;
+            if (!publishableKey) {
+                throw new Error('Stripe publishable key not configured');
+            }
             
-            // Create Payment Intent on backend
-            await this.createPaymentIntent();
-
-            // Setup Stripe Elements
-            this.setupStripeElements();
-
-            // Bind form events
-            this.bindEvents();
-
-            console.log('✅ Payment form ready');
-
+            this.stripe = Stripe(publishableKey);
+            console.log('✅ Stripe initialized');
+            return true;
         } catch (error) {
-            console.error('❌ Payment initialization failed:', error);
-            this.showError('Failed to initialize payment form. Please try again.');
+            console.error('❌ Stripe initialization failed:', error);
+            return false;
         }
     }
 
     /**
-     * Get quiz ID from various sources
+     * Submit quiz and get quiz ID
      */
-    getQuizId() {
-        // Check URL params first
-        const urlParams = new URLSearchParams(window.location.search);
-        let quizId = urlParams.get('quiz_id');
-        
-        // Fallback to localStorage
-        if (!quizId) {
-            quizId = localStorage.getItem('strandly_quiz_id');
-        }
-        
-        // Fallback to sessionStorage
-        if (!quizId) {
-            quizId = sessionStorage.getItem('strandly_quiz_id');
-        }
-
-        return quizId;
-    }
-
-    /**
-     * Create Payment Intent on backend
-     */
-    async createPaymentIntent() {
+    async submitQuiz(quizData) {
         try {
-            console.log('🔄 Creating payment intent...');
+            console.log('📝 Submitting quiz data...');
             
-            const response = await window.StrandlyApi.apiRequest('/api/payment/create-intent', {
+            const response = await fetch(`${this.apiUrl}/api/quiz/submit`, {
                 method: 'POST',
-                body: JSON.stringify({
-                    quizId: this.quizId,
-                    amount: 2900, // €29.00 in cents
-                    currency: 'eur'
-                })
-            });
-
-            this.clientSecret = response.clientSecret;
-            console.log('✅ Payment intent created');
-
-        } catch (error) {
-            console.error('❌ Failed to create payment intent:', error);
-            throw new Error('Unable to prepare payment. Please try again.');
-        }
-    }
-
-    /**
-     * Setup Stripe Elements
-     */
-    setupStripeElements() {
-        // Create Elements instance
-        this.elements = this.stripe.elements({
-            appearance: {
-                theme: 'stripe',
-                variables: {
-                    colorPrimary: '#667eea',
-                    colorBackground: '#ffffff',
-                    colorText: '#495057',
-                    colorDanger: '#dc3545',
-                    fontFamily: 'Inter, system-ui, sans-serif',
-                    spacingUnit: '4px',
-                    borderRadius: '8px'
+                headers: {
+                    'Content-Type': 'application/json',
                 },
-                rules: {
-                    '.Input': {
-                        padding: '12px',
-                        fontSize: '16px'
-                    }
-                }
-            }
-        });
-
-        // Create card element
-        this.cardElement = this.elements.create('payment', {
-            layout: 'tabs'
-        });
-
-        // Mount card element
-        this.cardElement.mount('#card-element');
-
-        // Handle real-time validation errors from the card Element
-        this.cardElement.on('change', (event) => {
-            const cardErrors = document.getElementById('card-errors');
-            const cardElementDiv = document.getElementById('card-element');
+                body: JSON.stringify(quizData)
+            });
             
-            if (event.error) {
-                cardErrors.textContent = event.error.message;
-                cardErrors.style.display = 'block';
-                cardElementDiv.classList.add('invalid');
-            } else {
-                cardErrors.style.display = 'none';
-                cardElementDiv.classList.remove('invalid');
+            if (!response.ok) {
+                throw new Error(`Quiz submission failed: ${response.status}`);
             }
-
-            // Update element styling based on focus
-            if (event.focus) {
-                cardElementDiv.classList.add('focused');
-            } else {
-                cardElementDiv.classList.remove('focused');
-            }
-        });
+            
+            const result = await response.json();
+            console.log('✅ Quiz submitted:', result.quizId);
+            
+            return result.quizId;
+        } catch (error) {
+            console.error('❌ Quiz submission error:', error);
+            throw error;
+        }
     }
 
     /**
-     * Bind form events
+     * Create payment checkout session
      */
-    bindEvents() {
-        const form = document.getElementById('payment-form');
-        form.addEventListener('submit', (event) => {
-            event.preventDefault();
-            this.handleSubmit();
-        });
+    async createPaymentSession(quizId) {
+        try {
+            console.log('💳 Creating payment session for quiz:', quizId);
+            
+            const response = await fetch(`${this.apiUrl}/api/payment/create-checkout`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ quizId })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Payment session creation failed: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            console.log('✅ Payment session created:', result.sessionId);
+            
+            return result;
+        } catch (error) {
+            console.error('❌ Payment session creation error:', error);
+            throw error;
+        }
     }
 
     /**
-     * Handle form submission
+     * Process payment for quiz completion
      */
-    async handleSubmit() {
+    async processPayment(quizData) {
         if (this.isProcessing) {
-            console.log('Already processing payment...');
-            return;
+            throw new Error('Payment already in progress');
         }
 
-        console.log('💳 Processing payment...');
-        this.setProcessingState(true);
+        this.isProcessing = true;
 
         try {
-            // Confirm the payment with Stripe
-            const { error, paymentIntent } = await this.stripe.confirmPayment({
-                elements: this.elements,
-                confirmParams: {
-                    return_url: `${window.location.origin}/success.html?quiz_id=${this.quizId}`,
-                },
-                redirect: 'if_required'
-            });
-
-            if (error) {
-                // Payment failed
-                console.error('❌ Payment failed:', error);
-                this.showError(error.message);
-                this.setProcessingState(false);
-            } else if (paymentIntent.status === 'succeeded') {
-                // Payment succeeded
-                console.log('✅ Payment succeeded!');
-                this.handlePaymentSuccess(paymentIntent);
+            // Step 1: Submit quiz data
+            const quizId = await this.submitQuiz(quizData);
+            
+            // Step 2: Create payment session
+            const paymentSession = await this.createPaymentSession(quizId);
+            
+            // Step 3: Handle payment based on mode
+            if (paymentSession.mock) {
+                // Mock payment - redirect to success page
+                console.log('🧪 Mock payment detected - redirecting to success page');
+                window.location.href = paymentSession.url;
+                return { success: true, mock: true, sessionId: paymentSession.sessionId };
             } else {
-                // Payment requires additional action
-                console.log('⚠️ Payment requires additional action:', paymentIntent.status);
-                this.setProcessingState(false);
+                // Real Stripe payment - redirect to checkout
+                if (!this.stripe) {
+                    await this.initializeStripe();
+                }
+                
+                console.log('💳 Redirecting to Stripe Checkout...');
+                const { error } = await this.stripe.redirectToCheckout({
+                    sessionId: paymentSession.sessionId
+                });
+                
+                if (error) {
+                    throw error;
+                }
+                
+                return { success: true, sessionId: paymentSession.sessionId };
             }
-
+            
         } catch (error) {
-            console.error('❌ Payment processing error:', error);
-            this.showError('An unexpected error occurred. Please try again.');
-            this.setProcessingState(false);
+            console.error('❌ Payment processing failed:', error);
+            throw error;
+        } finally {
+            this.isProcessing = false;
         }
     }
 
     /**
-     * Handle successful payment
+     * Verify payment completion
      */
-    handlePaymentSuccess(paymentIntent) {
-        console.log('🎉 Payment successful, redirecting...');
+    async verifyPayment(sessionId, quizId) {
+        try {
+            console.log('🔍 Verifying payment:', sessionId);
+            
+            const response = await fetch(`${this.apiUrl}/api/payment/verify`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ sessionId, quizId })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Payment verification failed: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            console.log('✅ Payment verification result:', result);
+            
+            return result;
+        } catch (error) {
+            console.error('❌ Payment verification error:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Handle payment success page
+     */
+    async handlePaymentSuccess() {
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sessionId = urlParams.get('session_id');
+            const quizId = urlParams.get('quiz_id');
+            
+            if (!sessionId || !quizId) {
+                console.warn('⚠️ Missing session_id or quiz_id in success URL');
+                return false;
+            }
+            
+            console.log('🎉 Processing payment success callback');
+            
+            // Verify payment was completed
+            const verification = await this.verifyPayment(sessionId, quizId);
+            
+            if (verification.success && verification.status === 'completed') {
+                console.log('✅ Payment successfully verified');
+                
+                // Show success message
+                this.showSuccessMessage();
+                
+                return true;
+            } else {
+                throw new Error('Payment verification failed');
+            }
+            
+        } catch (error) {
+            console.error('❌ Payment success handling failed:', error);
+            this.showErrorMessage('Payment verification failed. Please contact support.');
+            return false;
+        }
+    }
+
+    /**
+     * Show success message
+     */
+    showSuccessMessage() {
+        const successHtml = `
+            <div class="payment-success-overlay">
+                <div class="success-content">
+                    <div class="success-icon">🎉</div>
+                    <h2>Payment Successful!</h2>
+                    <p>Your hair analysis results will be delivered to your email within minutes.</p>
+                    <div class="success-details">
+                        <p><strong>Amount Paid:</strong> ${window.StrandlyConfig?.PAYMENT?.displayPrice || '$29.00'}</p>
+                        <p><strong>Analysis Status:</strong> Processing...</p>
+                    </div>
+                </div>
+            </div>
+        `;
         
-        // Store payment info for success page
-        sessionStorage.setItem('payment_intent_id', paymentIntent.id);
-        sessionStorage.setItem('payment_amount', '29.00');
-        
-        // Clear quiz data since it's complete
-        localStorage.removeItem('strandly_quiz_progress');
-        
-        // Redirect to success page
-        window.location.href = `success.html?quiz_id=${this.quizId}&payment_intent=${paymentIntent.id}`;
+        document.body.insertAdjacentHTML('beforeend', successHtml);
     }
 
     /**
      * Show error message
      */
-    showError(message) {
-        const errorDiv = document.getElementById('card-errors');
-        errorDiv.textContent = message;
-        errorDiv.style.display = 'block';
-        
-        // Auto-hide after 8 seconds
-        setTimeout(() => {
-            errorDiv.style.display = 'none';
-        }, 8000);
-    }
-
-    /**
-     * Set processing state
-     */
-    setProcessingState(processing) {
-        this.isProcessing = processing;
-        
-        const submitButton = document.getElementById('submit-payment');
-        const buttonText = submitButton.querySelector('.button-text');
-        const loadingSpinner = submitButton.querySelector('.loading-spinner');
-        const loadingOverlay = document.getElementById('loading-overlay');
-        
-        if (processing) {
-            submitButton.disabled = true;
-            buttonText.textContent = 'Processing...';
-            loadingSpinner.style.display = 'block';
-            loadingOverlay.style.display = 'flex';
-        } else {
-            submitButton.disabled = false;
-            buttonText.textContent = 'Complete Payment - €29';
-            loadingSpinner.style.display = 'none';
-            loadingOverlay.style.display = 'none';
-        }
-    }
-
-    /**
-     * Retry payment initialization
-     */
-    async retry() {
-        console.log('🔄 Retrying payment initialization...');
-        await this.initialize();
-    }
-}
-
-// Error handling for missing Stripe
-if (typeof Stripe === 'undefined') {
-    console.error('❌ Stripe.js not loaded. Please check your internet connection.');
-    document.body.innerHTML = `
-        <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; text-align: center; padding: 2rem;">
-            <div>
-                <h2>Unable to load payment system</h2>
-                <p>Please check your internet connection and try again.</p>
-                <button onclick="window.location.reload()" style="padding: 0.75rem 1.5rem; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                    Retry
-                </button>
+    showErrorMessage(message) {
+        const errorHtml = `
+            <div class="payment-error-overlay">
+                <div class="error-content">
+                    <div class="error-icon">❌</div>
+                    <h2>Payment Failed</h2>
+                    <p>${message}</p>
+                    <button onclick="location.reload()" class="retry-button">Try Again</button>
+                </div>
             </div>
-        </div>
-    `;
-} else {
-    // Initialize payment handler when DOM is ready
-    document.addEventListener('DOMContentLoaded', async () => {
-        console.log('🚀 DOM loaded, initializing payment handler...');
+        `;
         
-        // Wait for API service
-        const initPayment = async () => {
-            if (window.StrandlyApi) {
-                try {
-                    const paymentHandler = new StrandlyPaymentHandler();
-                    await paymentHandler.initialize();
-                    
-                    // Make globally accessible for debugging
-                    window.paymentHandler = paymentHandler;
-                    
-                } catch (error) {
-                    console.error('❌ Payment handler initialization failed:', error);
-                    
-                    // Show user-friendly error
-                    document.body.innerHTML = `
-                        <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; text-align: center; padding: 2rem;">
-                            <div style="max-width: 400px;">
-                                <h2>Payment Initialization Failed</h2>
-                                <p>${error.message || 'Unable to initialize payment form. Please try again.'}</p>
-                                <div style="margin-top: 2rem;">
-                                    <button onclick="window.location.href='quiz.html'" style="padding: 0.75rem 1.5rem; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 1rem;">
-                                        Back to Quiz
-                                    </button>
-                                    <button onclick="window.location.reload()" style="padding: 0.75rem 1.5rem; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                                        Try Again
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }
-            } else {
-                console.log('⏳ Waiting for API service...');
-                setTimeout(initPayment, 100);
-            }
-        };
-        
-        await initPayment();
-    });
+        document.body.insertAdjacentHTML('beforeend', errorHtml);
+    }
 }
+
+// Initialize payment handler when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    window.strandlyPaymentHandler = new StrandlyPaymentHandler();
+    
+    // Auto-handle payment success if on success page
+    if (window.location.pathname.includes('success') || 
+        window.location.search.includes('session_id')) {
+        window.strandlyPaymentHandler.handlePaymentSuccess();
+    }
+    
+    console.log('💳 Payment Handler ready');
+});

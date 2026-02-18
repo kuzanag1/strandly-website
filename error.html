@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - Strandly Hair Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .error-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+            margin: 2rem;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .error-header {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            padding: 3rem 2rem;
+        }
+
+        .error-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .error-header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .error-content {
+            padding: 3rem 2rem;
+        }
+
+        .error-content h2 {
+            color: #495057;
+            font-size: 1.5rem;
+            margin: 0 0 1rem 0;
+        }
+
+        .error-content p {
+            color: #6c757d;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin: 0 0 2rem 0;
+        }
+
+        .error-details {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-left: 4px solid #dc3545;
+            text-align: left;
+        }
+
+        .error-code {
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: #dc3545;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .error-container {
+                margin: 1rem;
+            }
+
+            .error-header {
+                padding: 2rem 1rem;
+            }
+
+            .error-content {
+                padding: 2rem 1.5rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-header">
+            <div class="error-icon">⚠️</div>
+            <h1>Oops! Something went wrong</h1>
+        </div>
+
+        <div class="error-content">
+            <h2 id="error-title">Unexpected Error</h2>
+            <p id="error-message">We encountered an unexpected issue while processing your request. Please try again or contact our support team if the problem persists.</p>
+
+            <div id="error-details" class="error-details" style="display: none;">
+                <strong>Error Details:</strong><br>
+                <span id="error-code" class="error-code">ERR_UNKNOWN</span>
+            </div>
+
+            <div class="action-buttons">
+                <a href="index.html" class="btn btn-primary">Back to Home</a>
+                <button onclick="window.history.back()" class="btn btn-secondary">Go Back</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Parse URL parameters for error details
+        const urlParams = new URLSearchParams(window.location.search);
+        const errorType = urlParams.get('type') || 'unknown';
+        const errorMessage = urlParams.get('message');
+        const errorCode = urlParams.get('code');
+
+        // Update error content based on type
+        const errorConfigs = {
+            payment: {
+                title: 'Payment Error',
+                message: 'There was an issue processing your payment. Your card has not been charged. Please try again or use a different payment method.',
+                showRetry: true
+            },
+            quiz: {
+                title: 'Quiz Error',
+                message: 'We encountered an issue while saving your quiz responses. Please try retaking the quiz.',
+                showRetry: true
+            },
+            network: {
+                title: 'Connection Error',
+                message: 'Unable to connect to our servers. Please check your internet connection and try again.',
+                showRetry: true
+            },
+            validation: {
+                title: 'Invalid Request',
+                message: 'The request contains invalid data. Please go back and try again.',
+                showRetry: false
+            },
+            server: {
+                title: 'Server Error',
+                message: 'Our servers are experiencing issues. Please try again in a few minutes.',
+                showRetry: true
+            }
+        };
+
+        const config = errorConfigs[errorType] || errorConfigs.unknown;
+
+        // Update page content
+        document.getElementById('error-title').textContent = config.title;
+        
+        if (errorMessage) {
+            document.getElementById('error-message').textContent = errorMessage;
+        } else {
+            document.getElementById('error-message').textContent = config.message;
+        }
+
+        // Show error details if available
+        if (errorCode) {
+            document.getElementById('error-details').style.display = 'block';
+            document.getElementById('error-code').textContent = errorCode;
+        }
+
+        // Add retry button if applicable
+        if (config.showRetry) {
+            const actionButtons = document.querySelector('.action-buttons');
+            const retryButton = document.createElement('button');
+            retryButton.className = 'btn btn-primary';
+            retryButton.textContent = 'Try Again';
+            retryButton.onclick = () => window.location.reload();
+            actionButtons.appendChild(retryButton);
+        }
+
+        // Log error for debugging
+        console.error('Error page loaded:', {
+            type: errorType,
+            message: errorMessage,
+            code: errorCode
+        });
+    </script>
+</body>
+</html>

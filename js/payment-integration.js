@@ -119,9 +119,9 @@ class StrandlyPaymentManager {
     getPricingInfo() {
         return {
             analysis: {
-                amount: 2900, // €29.00 in cents
-                currency: 'eur',
-                display: '€29.00'
+                amount: 2900, // $29.00 in cents
+                currency: 'usd',
+                display: '$29.00'
             },
             subscription: {
                 monthly: {

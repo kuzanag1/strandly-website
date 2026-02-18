@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful - Strandly Hair Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .success-container {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 40px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            width: 90%;
+            animation: slideIn 0.6s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .success-icon {
+            font-size: 80px;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .success-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+        
+        .success-subtitle {
+            font-size: 18px;
+            color: #718096;
+            margin-bottom: 40px;
+            line-height: 1.5;
+        }
+        
+        .payment-details {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        
+        .payment-details h3 {
+            color: #2d3748;
+            font-size: 18px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: between;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        
+        .detail-label {
+            font-weight: 500;
+            color: #4a5568;
+        }
+        
+        .detail-value {
+            font-weight: 600;
+            color: #2d3748;
+            margin-left: auto;
+        }
+        
+        .analysis-status {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            display: inline-block;
+        }
+        
+        .next-steps {
+            text-align: left;
+            margin-bottom: 30px;
+        }
+        
+        .next-steps h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .next-steps ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .next-steps li {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .next-steps li::before {
+            content: "✅";
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+        
+        .support-info {
+            background: #edf2f7;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .support-info h4 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        
+        .support-info p {
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        @media (max-width: 600px) {
+            .success-container {
+                padding: 40px 20px;
+                margin: 20px;
+            }
+            
+            .success-title {
+                font-size: 24px;
+            }
+            
+            .success-icon {
+                font-size: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-icon">🎉</div>
+        <h1 class="success-title">Payment Successful!</h1>
+        <p class="success-subtitle">Thank you for choosing Strandly. Your hair analysis is being processed.</p>
+        
+        <div class="analysis-status" id="analysisStatus">
+            <span class="loading-spinner"></span>
+            Processing your analysis...
+        </div>
+        
+        <div class="payment-details">
+            <h3>Payment Summary</h3>
+            <div class="detail-row">
+                <span class="detail-label">Service:</span>
+                <span class="detail-value">Professional Hair Analysis</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Amount Paid:</span>
+                <span class="detail-value">$29.00</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Payment Status:</span>
+                <span class="detail-value" style="color: #48bb78;">✅ Completed</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Transaction Date:</span>
+                <span class="detail-value" id="transactionDate">-</span>
+            </div>
+        </div>
+        
+        <div class="next-steps">
+            <h3>What happens next?</h3>
+            <ul>
+                <li>Our AI analyzes your hair characteristics and lifestyle factors</li>
+                <li>We generate personalized product recommendations</li>
+                <li>Your comprehensive report is prepared</li>
+                <li>Results are delivered to your email within 5 minutes</li>
+            </ul>
+        </div>
+        
+        <div class="support-info">
+            <h4>Need Help?</h4>
+            <p><strong>Email:</strong> support@strandly.shop</p>
+            <p><strong>Response Time:</strong> Within 24 hours</p>
+            <p>Don't see your email? Check your spam folder or contact support.</p>
+        </div>
+        
+        <div class="error-message" id="errorMessage">
+            Payment verification failed. Please contact support with your transaction details.
+        </div>
+    </div>
+    
+    <!-- Load configuration and payment handler -->
+    <script src="js/config.js"></script>
+    <script src="js/payment-handler.js"></script>
+    
+    <script>
+        // Set current date
+        document.getElementById('transactionDate').textContent = new Date().toLocaleDateString();
+        
+        // Handle payment verification
+        document.addEventListener('DOMContentLoaded', async function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sessionId = urlParams.get('session_id');
+            const quizId = urlParams.get('quiz_id');
+            
+            if (sessionId && quizId) {
+                try {
+                    console.log('🔍 Verifying payment...');
+                    
+                    // Update status to show verification in progress
+                    const statusEl = document.getElementById('analysisStatus');
+                    statusEl.innerHTML = '<span class="loading-spinner"></span>Verifying payment...';
+                    
+                    // Wait a moment for backend processing
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    
+                    // Verify payment
+                    const verification = await window.strandlyPaymentHandler.verifyPayment(sessionId, quizId);
+                    
+                    if (verification.success && verification.status === 'completed') {
+                        statusEl.innerHTML = '✅ Analysis complete! Check your email.';
+                        statusEl.style.background = 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)';
+                        console.log('✅ Payment verified and analysis ready');
+                    } else {
+                        throw new Error('Payment verification failed');
+                    }
+                    
+                } catch (error) {
+                    console.error('❌ Payment verification error:', error);
+                    document.getElementById('analysisStatus').innerHTML = '⚠️ Verification in progress...';
+                    document.getElementById('errorMessage').style.display = 'block';
+                }
+            } else {
+                console.warn('⚠️ Missing payment parameters');
+                document.getElementById('analysisStatus').innerHTML = '⚠️ Payment details missing';
+                document.getElementById('errorMessage').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
