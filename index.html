@@ -3,889 +3,431 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Strandly - Your Hair, Decoded | Professional Hair Analysis</title>
-    <meta name="description" content="Get personalized hair care recommendations powered by science. Better than salon consultations at a fraction of the cost. Only $29 - Results in 2 minutes.">
-    
-    <!-- Enhanced SEO and Social Meta -->
-    <meta property="og:title" content="Strandly - Your Hair, Decoded">
-    <meta property="og:description" content="Science-backed hair analysis and personalized care recommendations for $29">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://strandly.com">
-    <meta name="twitter:card" content="summary_large_image">
-    
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="css/strandly.css">
-    <link rel="stylesheet" href="css/enhanced-landing.css">
-    <link rel="stylesheet" href="css/mobile-optimization.css">
-    <link rel="stylesheet" href="css/mobile-emergency-fix.css">
-    
-    <!-- Schema markup for SEO -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Service",
-        "name": "Strandly Hair Analysis",
-        "description": "Professional hair analysis and personalized care recommendations",
-        "provider": {
-            "@type": "Organization",
-            "name": "Strandly"
-        },
-        "offers": {
-            "@type": "Offer",
-            "price": "29",
-            "priceCurrency": "USD"
+    <title>Strandly - Personalized Hair Care Analysis</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-    }
-    </script>
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .price-tag {
+            display: inline-block;
+            background: #27ae60;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .quiz-form {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .question {
+            margin-bottom: 25px;
+        }
+
+        .question h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .radio-option:hover {
+            border-color: #3498db;
+            background: #f8f9fa;
+        }
+
+        .radio-option input[type="radio"] {
+            margin: 0;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .submit-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .error {
+            color: #e74c3c;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .quiz-form {
+                padding: 20px;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div id="loading-screen" class="loading-screen">
-        <div class="loading-content">
-            <div class="loading-logo">
-                <h1 class="gradient-text">Strandly</h1>
-                <div class="loading-animation"></div>
-            </div>
+    <div class="container">
+        <div class="header">
+            <div class="logo">Strandly</div>
+            <div class="subtitle">Get Your Personalized Hair Care Analysis</div>
+            <div class="price-tag">Only $29</div>
         </div>
-    </div>
 
-    <!-- Enhanced Navigation with Breadcrumbs -->
-    <nav class="enhanced-navbar" role="navigation" aria-label="Main navigation">
-        <div class="nav-container">
-            <div class="nav-brand">
-                <h1 class="gradient-text brand-logo" aria-label="Strandly - Home">Strandly</h1>
-                <span class="tagline" aria-hidden="true">Your hair, decoded</span>
+        <form class="quiz-form" id="hairQuiz">
+            <div class="question">
+                <h3>1. What's your name?</h3>
+                <input type="text" name="name" required>
             </div>
-            
-            <!-- Desktop Navigation -->
-            <div class="nav-links desktop-nav" role="menubar">
-                <a href="#how-it-works" class="nav-link" role="menuitem">How It Works</a>
-                <a href="#science" class="nav-link" role="menuitem">The Science</a>
-                <a href="#testimonials" class="nav-link" role="menuitem">Reviews</a>
-                <a href="#faq" class="nav-link" role="menuitem">FAQ</a>
-                <button class="cta-button small" onclick="startQuiz()" aria-label="Start hair analysis quiz">
-                    Start Analysis
-                </button>
+
+            <div class="question">
+                <h3>2. Email address</h3>
+                <input type="email" name="email" required>
             </div>
-            
-            <!-- Mobile Menu Button -->
-            <button class="mobile-menu-btn" aria-label="Toggle mobile menu" aria-expanded="false">
-                <span class="hamburger"></span>
-                <span class="hamburger"></span>
-                <span class="hamburger"></span>
+
+            <div class="question">
+                <h3>3. What country are you located in?</h3>
+                <input type="text" name="country" required>
+            </div>
+
+            <div class="question">
+                <h3>4. What's your hair type?</h3>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="hair_type" value="straight" required>
+                        Straight
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="hair_type" value="wavy" required>
+                        Wavy
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="hair_type" value="curly" required>
+                        Curly
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="hair_type" value="coily" required>
+                        Coily/Kinky
+                    </label>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>5. How would you describe your hair thickness?</h3>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="hair_thickness" value="fine" required>
+                        Fine
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="hair_thickness" value="medium" required>
+                        Medium
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="hair_thickness" value="thick" required>
+                        Thick
+                    </label>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>6. What's your hair length?</h3>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="hair_length" value="short" required>
+                        Short (above shoulders)
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="hair_length" value="medium" required>
+                        Medium (shoulder to mid-back)
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="hair_length" value="long" required>
+                        Long (below mid-back)
+                    </label>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>7. How often do you wash your hair?</h3>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="wash_frequency" value="daily" required>
+                        Daily
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="wash_frequency" value="every-other-day" required>
+                        Every other day
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="wash_frequency" value="2-3-times-week" required>
+                        2-3 times per week
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="wash_frequency" value="weekly" required>
+                        Once a week or less
+                    </label>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>8. What's your main hair concern?</h3>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="main_concern" value="dryness" required>
+                        Dryness
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="main_concern" value="frizz" required>
+                        Frizz
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="main_concern" value="damage" required>
+                        Damage/Breakage
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="main_concern" value="oily-scalp" required>
+                        Oily scalp
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="main_concern" value="thinning" required>
+                        Thinning/Volume
+                    </label>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>9. Do you regularly use heat styling tools?</h3>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="heat_styling" value="daily" required>
+                        Daily
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="heat_styling" value="few-times-week" required>
+                        Few times a week
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="heat_styling" value="rarely" required>
+                        Rarely
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="heat_styling" value="never" required>
+                        Never
+                    </label>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>10. What's your hair goal?</h3>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="hair_goal" value="healthier" required>
+                        Healthier, stronger hair
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="hair_goal" value="shinier" required>
+                        More shine and smoothness
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="hair_goal" value="volume" required>
+                        More volume and thickness
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="hair_goal" value="growth" required>
+                        Faster growth and length retention
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="hair_goal" value="manageability" required>
+                        Easier styling and manageability
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                Get My Hair Analysis - $29
             </button>
-        </div>
-        
-        <!-- Mobile Navigation -->
-        <div class="mobile-nav" role="menu">
-            <a href="#how-it-works" class="mobile-nav-link" role="menuitem">How It Works</a>
-            <a href="#science" class="mobile-nav-link" role="menuitem">The Science</a>
-            <a href="#testimonials" class="mobile-nav-link" role="menuitem">Reviews</a>
-            <a href="#faq" class="mobile-nav-link" role="menuitem">FAQ</a>
-            <button class="cta-button mobile-cta" onclick="startQuiz()">Start Analysis</button>
-        </div>
-        
-        <!-- Trust Bar -->
-        <div class="trust-bar">
-            <div class="trust-container">
-                <div class="trust-items">
-                    <div class="trust-item">
-                        <span class="trust-icon">🔒</span>
-                        <span>SSL Secured</span>
-                    </div>
-                    <div class="trust-item">
-                        <span class="trust-icon">⚡</span>
-                        <span>2 Min Analysis</span>
-                    </div>
-                    <div class="trust-item">
-                        <span class="trust-icon">💰</span>
-                        <span>Money Back Guarantee</span>
-                    </div>
-                    <div class="trust-item">
-                        <span class="trust-icon">👥</span>
-                        <span>10,000+ Happy Customers</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Breadcrumb Navigation -->
-    <nav class="breadcrumb" aria-label="Breadcrumb">
-        <div class="container">
-            <ol class="breadcrumb-list">
-                <li class="breadcrumb-item">
-                    <a href="/" aria-label="Home">Home</a>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">
-                    Hair Analysis
-                </li>
-            </ol>
-        </div>
-    </nav>
-
-    <!-- Enhanced Hero Section with Interactive Elements -->
-    <section class="enhanced-hero" role="banner">
-        <div class="hero-background"></div>
-        <div class="hero-container">
-            <div class="hero-content">
-                <!-- Attention-grabbing headline -->
-                <div class="hero-badge">
-                    <span class="badge-text">🧬 Science-Backed Analysis</span>
-                </div>
-                
-                <h1 class="hero-title">
-                    Your hair, <span class="gradient-text">decoded</span>
-                    <span class="title-underline"></span>
-                </h1>
-                
-                <p class="hero-subtitle">
-                    Get personalized hair care recommendations powered by science, not guesswork. 
-                    <strong>Better than $200 salon consultations</strong> at a fraction of the cost.
-                </p>
-                
-                <!-- Social Proof Counter -->
-                <div class="social-proof-counter">
-                    <div class="counter-item">
-                        <span class="counter-number" data-target="12847">0</span>
-                        <span class="counter-label">Analyses Completed</span>
-                    </div>
-                    <div class="counter-separator">•</div>
-                    <div class="counter-item">
-                        <span class="counter-number" data-target="4.8">0</span>
-                        <span class="counter-label">Average Rating</span>
-                    </div>
-                </div>
-                
-                <div class="hero-cta">
-                    <button class="cta-button large enhanced-cta" onclick="startQuiz()" aria-describedby="cta-description">
-                        <span class="cta-main">🧬 Discover Your Hair Type</span>
-                        <span class="cta-subtext">Takes 2 minutes • Only $29</span>
-                    </button>
-                    <div id="cta-description" class="sr-only">
-                        Start your personalized hair analysis quiz. Takes about 2 minutes and costs $29.
-                    </div>
-                    
-                    <div class="cta-guarantee">
-                        <span class="guarantee-icon">✅</span>
-                        <span class="guarantee-text">30-day money back guarantee</span>
-                    </div>
-                </div>
-                
-                <!-- Enhanced Trust Indicators -->
-                <div class="trust-indicators">
-                    <div class="trust-indicator">
-                        <span class="trust-badge">
-                            <span class="badge-icon">🧬</span>
-                            <span class="badge-text">Science-backed</span>
-                        </span>
-                    </div>
-                    <div class="trust-indicator">
-                        <span class="trust-badge">
-                            <span class="badge-icon">⚡</span>
-                            <span class="badge-text">Instant results</span>
-                        </span>
-                    </div>
-                    <div class="trust-indicator">
-                        <span class="trust-badge">
-                            <span class="badge-icon">💰</span>
-                            <span class="badge-text">Only $29</span>
-                        </span>
-                    </div>
-                    <div class="trust-indicator">
-                        <span class="trust-badge">
-                            <span class="badge-icon">🔒</span>
-                            <span class="badge-text">Secure & Private</span>
-                        </span>
-                    </div>
-                </div>
-                
-                <!-- Quick Preview -->
-                <div class="hero-preview">
-                    <button class="preview-btn" onclick="showPreview()">
-                        <span class="preview-icon">👁</span>
-                        <span class="preview-text">Quick Preview</span>
-                    </button>
-                </div>
-            </div>
             
-            <div class="hero-visual">
-                <!-- Interactive Hair Types Showcase -->
-                <div class="hair-showcase">
-                    <div class="showcase-header">
-                        <h3>See Your Hair Type</h3>
-                        <p>Hover to explore different hair patterns</p>
-                    </div>
-                    <div class="hair-grid">
-                        <div class="hair-sample straight" data-type="Straight Hair" title="Type 1: Straight Hair">
-                            <div class="hair-overlay">
-                                <span class="hair-type">Type 1</span>
-                                <span class="hair-description">Straight</span>
-                            </div>
-                        </div>
-                        <div class="hair-sample wavy" data-type="Wavy Hair" title="Type 2: Wavy Hair">
-                            <div class="hair-overlay">
-                                <span class="hair-type">Type 2</span>
-                                <span class="hair-description">Wavy</span>
-                            </div>
-                        </div>
-                        <div class="hair-sample curly" data-type="Curly Hair" title="Type 3: Curly Hair">
-                            <div class="hair-overlay">
-                                <span class="hair-type">Type 3</span>
-                                <span class="hair-description">Curly</span>
-                            </div>
-                        </div>
-                        <div class="hair-sample coily" data-type="Coily Hair" title="Type 4: Coily Hair">
-                            <div class="hair-overlay">
-                                <span class="hair-type">Type 4</span>
-                                <span class="hair-description">Coily</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="showcase-footer">
-                        <p class="showcase-note">Which one looks most like your hair?</p>
-                        <button class="mini-cta" onclick="startQuiz()">Find Out Now →</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Scroll Indicator -->
-        <div class="scroll-indicator">
-            <div class="scroll-mouse">
-                <div class="scroll-wheel"></div>
-            </div>
-            <span class="scroll-text">Scroll to learn more</span>
-        </div>
-    </section>
+            <div class="error" id="errorMessage"></div>
+        </form>
 
-    <!-- Enhanced Value Propositions with Interactive Cards -->
-    <section class="enhanced-value-props" role="region" aria-labelledby="value-props-title">
-        <div class="container">
-            <h2 id="value-props-title" class="section-title">
-                Why thousands choose Strandly over expensive salon consultations
-            </h2>
-            
-            <div class="value-grid">
-                <div class="value-card enhanced" tabindex="0" role="button" aria-label="Learn about science-backed analysis">
-                    <div class="value-header">
-                        <div class="value-icon gradient-bg">🧬</div>
-                        <div class="value-badge">Most Popular</div>
-                    </div>
-                    <h3>Science-Backed Analysis</h3>
-                    <p>Our quiz analyzes porosity, density, and damage patterns that 90% of products ignore</p>
-                    <div class="value-stats">
-                        <div class="stat-item">
-                            <span class="stat-number">15+</span>
-                            <span class="stat-label">Hair Factors</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number">99%</span>
-                            <span class="stat-label">Accuracy</span>
-                        </div>
-                    </div>
-                    <div class="value-action">
-                        <span class="action-link">Learn More →</span>
-                    </div>
-                </div>
-                
-                <div class="value-card enhanced" tabindex="0" role="button" aria-label="Learn about personalized recommendations">
-                    <div class="value-header">
-                        <div class="value-icon gradient-bg">🎯</div>
-                    </div>
-                    <h3>Personalized Recommendations</h3>
-                    <p>Custom routines based on your unique hair profile, lifestyle, and environment</p>
-                    <div class="value-stats">
-                        <div class="stat-item">
-                            <span class="stat-number">50+</span>
-                            <span class="stat-label">Product Types</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number">24/7</span>
-                            <span class="stat-label">Support</span>
-                        </div>
-                    </div>
-                    <div class="value-action">
-                        <span class="action-link">See Example →</span>
-                    </div>
-                </div>
-                
-                <div class="value-card enhanced" tabindex="0" role="button" aria-label="Learn about cost savings">
-                    <div class="value-header">
-                        <div class="value-icon gradient-bg">💰</div>
-                        <div class="value-badge savings">85% Savings</div>
-                    </div>
-                    <h3>Fraction of Salon Cost</h3>
-                    <p>Get better insights than a $200 consultation for just $29</p>
-                    <div class="value-comparison">
-                        <div class="comparison-item">
-                            <span class="old-price">Salon: $200</span>
-                            <span class="new-price">Strandly: $29</span>
-                        </div>
-                    </div>
-                    <div class="value-action">
-                        <span class="action-link">Start Saving →</span>
-                    </div>
-                </div>
-                
-                <div class="value-card enhanced" tabindex="0" role="button" aria-label="Learn about instant results">
-                    <div class="value-header">
-                        <div class="value-icon gradient-bg">⚡</div>
-                    </div>
-                    <h3>Results in Minutes</h3>
-                    <p>Complete analysis and custom routine delivered instantly to your inbox</p>
-                    <div class="value-timeline">
-                        <div class="timeline-step">
-                            <span class="step-time">2 min</span>
-                            <span class="step-action">Take Quiz</span>
-                        </div>
-                        <div class="timeline-step">
-                            <span class="step-time">1 min</span>
-                            <span class="step-action">Get Results</span>
-                        </div>
-                    </div>
-                    <div class="value-action">
-                        <span class="action-link">Try Now →</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Enhanced How It Works with Step Animations -->
-    <section id="how-it-works" class="enhanced-how-it-works" role="region" aria-labelledby="how-it-works-title">
-        <div class="container">
-            <h2 id="how-it-works-title" class="section-title">How Strandly works</h2>
-            <div class="steps-container">
-                <div class="step-line"></div>
-                
-                <div class="step enhanced" data-step="1">
-                    <div class="step-number">
-                        <span>1</span>
-                        <div class="step-pulse"></div>
-                    </div>
-                    <div class="step-content">
-                        <div class="step-icon">📋</div>
-                        <h3>Take Our Smart Quiz</h3>
-                        <p>Answer 10 carefully crafted questions about your hair characteristics, lifestyle, and concerns</p>
-                        <div class="step-details">
-                            <span class="detail-item">⏱️ 2 minutes</span>
-                            <span class="detail-item">📱 Mobile-friendly</span>
-                        </div>
-                        <button class="step-cta" onclick="startQuiz()">Start Quiz</button>
-                    </div>
-                </div>
-                
-                <div class="step enhanced" data-step="2">
-                    <div class="step-number">
-                        <span>2</span>
-                        <div class="step-pulse"></div>
-                    </div>
-                    <div class="step-content">
-                        <div class="step-icon">🔬</div>
-                        <h3>Get Your Hair Profile</h3>
-                        <p>Our algorithm analyzes your porosity, density, curl pattern, and damage level</p>
-                        <div class="step-details">
-                            <span class="detail-item">🧬 15+ factors</span>
-                            <span class="detail-item">⚡ Instant analysis</span>
-                        </div>
-                        <div class="step-preview">
-                            <span class="preview-link">See sample report →</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="step enhanced" data-step="3">
-                    <div class="step-number">
-                        <span>3</span>
-                        <div class="step-pulse"></div>
-                    </div>
-                    <div class="step-content">
-                        <div class="step-icon">📧</div>
-                        <h3>Receive Custom Routine</h3>
-                        <p>Detailed morning and evening routines with specific product recommendations</p>
-                        <div class="step-details">
-                            <span class="detail-item">📋 Detailed guide</span>
-                            <span class="detail-item">🛒 Shopping list</span>
-                        </div>
-                        <div class="step-guarantee">
-                            <span class="guarantee-text">✅ Money back guarantee</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="step enhanced" data-step="4">
-                    <div class="step-number">
-                        <span>4</span>
-                        <div class="step-pulse"></div>
-                    </div>
-                    <div class="step-content">
-                        <div class="step-icon">✨</div>
-                        <h3>See Real Results</h3>
-                        <p>Follow your personalized routine and watch your hair transform in weeks</p>
-                        <div class="step-details">
-                            <span class="detail-item">📈 Track progress</span>
-                            <span class="detail-item">💬 Expert support</span>
-                        </div>
-                        <div class="step-testimonial">
-                            <span class="testimonial-quote">"Best hair decision ever!" - Sarah M.</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Enhanced Testimonials with Carousel -->
-    <section id="testimonials" class="enhanced-testimonials" role="region" aria-labelledby="testimonials-title">
-        <div class="container">
-            <h2 id="testimonials-title" class="section-title">What our users say</h2>
-            
-            <div class="testimonials-carousel">
-                <div class="testimonial-track">
-                    <div class="testimonial enhanced active">
-                        <div class="testimonial-header">
-                            <div class="user-avatar">SM</div>
-                            <div class="user-info">
-                                <span class="user-name">Sarah M.</span>
-                                <div class="stars">★★★★★</div>
-                            </div>
-                        </div>
-                        <p>"Better than my $200 salon consultation. The porosity test was a game-changer! My hair has never looked healthier."</p>
-                        <div class="testimonial-meta">
-                            <span class="meta-item">✅ Verified Purchase</span>
-                            <span class="meta-item">📅 3 weeks ago</span>
-                        </div>
-                    </div>
-                    
-                    <div class="testimonial enhanced">
-                        <div class="testimonial-header">
-                            <div class="user-avatar">JL</div>
-                            <div class="user-info">
-                                <span class="user-name">Jessica L.</span>
-                                <div class="stars">★★★★★</div>
-                            </div>
-                        </div>
-                        <p>"Finally found products that actually work for my hair type. Worth every penny. The customized routine is incredible!"</p>
-                        <div class="testimonial-meta">
-                            <span class="meta-item">✅ Verified Purchase</span>
-                            <span class="meta-item">📅 1 week ago</span>
-                        </div>
-                    </div>
-                    
-                    <div class="testimonial enhanced">
-                        <div class="testimonial-header">
-                            <div class="user-avatar">MT</div>
-                            <div class="user-info">
-                                <span class="user-name">Marcus T.</span>
-                                <div class="stars">★★★★★</div>
-                            </div>
-                        </div>
-                        <p>"The science behind it is incredible. My hair has never looked better. Wish I found this years ago!"</p>
-                        <div class="testimonial-meta">
-                            <span class="meta-item">✅ Verified Purchase</span>
-                            <span class="meta-item">📅 2 days ago</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="carousel-controls">
-                    <button class="carousel-btn prev" aria-label="Previous testimonial">‹</button>
-                    <div class="carousel-indicators">
-                        <button class="indicator active" data-slide="0"></button>
-                        <button class="indicator" data-slide="1"></button>
-                        <button class="indicator" data-slide="2"></button>
-                    </div>
-                    <button class="carousel-btn next" aria-label="Next testimonial">›</button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Enhanced Science Section with Interactive Diagrams -->
-    <section id="science" class="enhanced-science-section" role="region" aria-labelledby="science-title">
-        <div class="container">
-            <h2 id="science-title" class="section-title">The Science Behind Strandly</h2>
-            <div class="science-content">
-                <div class="science-text">
-                    <h3>Why Most Hair Products Fail</h3>
-                    <p>Traditional hair care ignores the three critical factors that determine what products will actually work for you:</p>
-                    
-                    <div class="science-factors">
-                        <div class="factor-item" tabindex="0">
-                            <div class="factor-icon">💧</div>
-                            <div class="factor-content">
-                                <strong>Porosity:</strong>
-                                <p>How your hair absorbs and retains moisture</p>
-                                <div class="factor-detail">
-                                    <span class="detail-link">Learn more →</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="factor-item" tabindex="0">
-                            <div class="factor-icon">📊</div>
-                            <div class="factor-content">
-                                <strong>Density:</strong>
-                                <p>How much hair you actually have</p>
-                                <div class="factor-detail">
-                                    <span class="detail-link">Learn more →</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="factor-item" tabindex="0">
-                            <div class="factor-icon">🔍</div>
-                            <div class="factor-content">
-                                <strong>Damage Patterns:</strong>
-                                <p>Where your hair needs the most help</p>
-                                <div class="factor-detail">
-                                    <span class="detail-link">Learn more →</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <p>Our analysis considers all these factors plus your environment, lifestyle, and styling habits.</p>
-                    
-                    <div class="science-stats">
-                        <div class="stat-group">
-                            <div class="stat-item">
-                                <span class="stat-number">15+</span>
-                                <span class="stat-label">Factors Analyzed</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-number">99.2%</span>
-                                <span class="stat-label">Accuracy Rate</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-number">10,000+</span>
-                                <span class="stat-label">Data Points</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="science-visual">
-                    <div class="interactive-diagram">
-                        <div class="diagram-header">
-                            <h4>Interactive Hair Strand Analysis</h4>
-                            <p>Click on each layer to learn more</p>
-                        </div>
-                        
-                        <div class="hair-strand-diagram">
-                            <div class="hair-strand interactive">
-                                <div class="strand-layer cuticle" tabindex="0" role="button" aria-label="Learn about cuticle layer">
-                                    <span class="layer-label">Cuticle</span>
-                                    <div class="layer-tooltip">
-                                        <h5>Cuticle Layer</h5>
-                                        <p>Protects inner hair shaft. Damage here causes frizz and dryness.</p>
-                                    </div>
-                                </div>
-                                <div class="strand-layer cortex" tabindex="0" role="button" aria-label="Learn about cortex layer">
-                                    <span class="layer-label">Cortex</span>
-                                    <div class="layer-tooltip">
-                                        <h5>Cortex</h5>
-                                        <p>Contains melanin and gives hair its strength, elasticity, and color.</p>
-                                    </div>
-                                </div>
-                                <div class="strand-layer medulla" tabindex="0" role="button" aria-label="Learn about medulla layer">
-                                    <span class="layer-label">Medulla</span>
-                                    <div class="layer-tooltip">
-                                        <h5>Medulla</h5>
-                                        <p>The innermost layer. Not always present in fine hair.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="diagram-footer">
-                            <p class="analysis-note">We analyze your hair at the molecular level</p>
-                            <button class="diagram-cta" onclick="startQuiz()">Analyze My Hair</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Enhanced FAQ Section -->
-    <section id="faq" class="enhanced-faq" role="region" aria-labelledby="faq-title">
-        <div class="container">
-            <h2 id="faq-title" class="section-title">Frequently Asked Questions</h2>
-            
-            <div class="faq-grid">
-                <div class="faq-item" tabindex="0" role="button" aria-expanded="false">
-                    <div class="faq-question">
-                        <h3>How accurate is the hair analysis?</h3>
-                        <span class="faq-toggle">+</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Our algorithm has a 99.2% accuracy rate based on over 10,000 hair analyses. We consider 15+ factors that most products ignore, including porosity, density, damage patterns, and environmental factors.</p>
-                    </div>
-                </div>
-                
-                <div class="faq-item" tabindex="0" role="button" aria-expanded="false">
-                    <div class="faq-question">
-                        <h3>What if I'm not satisfied with my results?</h3>
-                        <span class="faq-toggle">+</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p>We offer a 30-day money-back guarantee. If you're not completely satisfied with your personalized hair analysis, we'll refund your payment in full.</p>
-                    </div>
-                </div>
-                
-                <div class="faq-item" tabindex="0" role="button" aria-expanded="false">
-                    <div class="faq-question">
-                        <h3>How long does it take to see results?</h3>
-                        <span class="faq-toggle">+</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Most customers see noticeable improvements within 2-3 weeks of following their personalized routine. Full transformation typically occurs within 6-8 weeks.</p>
-                    </div>
-                </div>
-                
-                <div class="faq-item" tabindex="0" role="button" aria-expanded="false">
-                    <div class="faq-question">
-                        <h3>Is my personal information secure?</h3>
-                        <span class="faq-toggle">+</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Absolutely. We use SSL encryption and never share your personal information with third parties. Your hair analysis data is stored securely and used only to provide your personalized recommendations.</p>
-                    </div>
-                </div>
-                
-                <div class="faq-item" tabindex="0" role="button" aria-expanded="false">
-                    <div class="faq-question">
-                        <h3>Can I retake the analysis if my hair changes?</h3>
-                        <span class="faq-toggle">+</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Yes! Hair can change due to treatments, hormones, or lifestyle factors. You can retake the analysis anytime for 50% off the original price.</p>
-                    </div>
-                </div>
-                
-                <div class="faq-item" tabindex="0" role="button" aria-expanded="false">
-                    <div class="faq-question">
-                        <h3>Do you recommend specific brands?</h3>
-                        <span class="faq-toggle">+</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p>We recommend products from various trusted brands based on your specific needs. We're not affiliated with any single brand and always prioritize what's best for your hair type.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Enhanced Final CTA with Urgency -->
-    <section class="enhanced-final-cta" role="region" aria-labelledby="final-cta-title">
-        <div class="cta-background"></div>
-        <div class="container">
-            <div class="cta-content">
-                <div class="cta-urgency">
-                    <span class="urgency-badge">🔥 Limited Time</span>
-                </div>
-                
-                <h2 id="final-cta-title">Ready to decode your hair?</h2>
-                <p class="cta-subtitle">Join thousands who've discovered their perfect hair routine</p>
-                
-                <div class="cta-value-stack">
-                    <div class="value-item">
-                        <span class="value-icon">✅</span>
-                        <span class="value-text">2-minute science-backed analysis</span>
-                    </div>
-                    <div class="value-item">
-                        <span class="value-icon">✅</span>
-                        <span class="value-text">Personalized product recommendations</span>
-                    </div>
-                    <div class="value-item">
-                        <span class="value-icon">✅</span>
-                        <span class="value-text">30-day money back guarantee</span>
-                    </div>
-                </div>
-                
-                <div class="cta-pricing">
-                    <div class="price-comparison">
-                        <span class="old-price">Salon consultation: $200</span>
-                        <span class="new-price">Today: $29</span>
-                        <span class="savings">Save $171!</span>
-                    </div>
-                </div>
-                
-                <button class="cta-button large final-cta-btn" onclick="startQuiz()" aria-describedby="final-cta-description">
-                    <span class="cta-main">Start Your Hair Analysis</span>
-                    <span class="cta-subtext">Results in 2 minutes • Only $29</span>
-                </button>
-                <div id="final-cta-description" class="sr-only">
-                    Complete your personalized hair analysis for $29, significantly less than a salon consultation.
-                </div>
-                
-                <div class="cta-guarantees">
-                    <div class="guarantee-item">
-                        <span class="guarantee-icon">🔒</span>
-                        <span class="guarantee-text">SSL Secured</span>
-                    </div>
-                    <div class="guarantee-item">
-                        <span class="guarantee-icon">💰</span>
-                        <span class="guarantee-text">Money Back Guarantee</span>
-                    </div>
-                    <div class="guarantee-item">
-                        <span class="guarantee-icon">⚡</span>
-                        <span class="guarantee-text">Instant Results</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Enhanced Footer with Better Organization -->
-    <footer class="enhanced-footer" role="contentinfo">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <h3 class="gradient-text">Strandly</h3>
-                    <p class="brand-tagline">Your hair, decoded</p>
-                    <div class="brand-stats">
-                        <span class="stat">10,000+ satisfied customers</span>
-                        <span class="stat">4.8/5 average rating</span>
-                    </div>
-                </div>
-                
-                <div class="footer-links-group">
-                    <div class="footer-column">
-                        <h4>Product</h4>
-                        <ul>
-                            <li><a href="#how-it-works">How It Works</a></li>
-                            <li><a href="#science">The Science</a></li>
-                            <li><a href="quiz.html">Take Quiz</a></li>
-                            <li><a href="#faq">FAQ</a></li>
-                        </ul>
-                    </div>
-                    
-                    <div class="footer-column">
-                        <h4>Support</h4>
-                        <ul>
-                            <li><a href="contact.html">Contact Us</a></li>
-                            <li><a href="contact.html">Help Center</a></li>
-                            <li><a href="refund.html">Refund Policy</a></li>
-                            <li><a href="contact.html">System Status</a></li>
-                        </ul>
-                    </div>
-                    
-                    <div class="footer-column">
-                        <h4>Legal</h4>
-                        <ul>
-                            <li><a href="privacy-policy.html">Privacy Policy</a></li>
-                            <li><a href="terms-of-service.html">Terms of Service</a></li>
-                            <li><a href="privacy-policy.html">Cookie Policy</a></li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="footer-trust">
-                    <div class="trust-badges">
-                        <div class="trust-badge">
-                            <span class="badge-icon">🔒</span>
-                            <span class="badge-text">SSL Secured</span>
-                        </div>
-                        <div class="trust-badge">
-                            <span class="badge-icon">💰</span>
-                            <span class="badge-text">Money Back Guarantee</span>
-                        </div>
-                        <div class="trust-badge">
-                            <span class="badge-icon">✅</span>
-                            <span class="badge-text">Verified Reviews</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <div class="copyright">
-                    <p>&copy; 2026 Strandly. All rights reserved.</p>
-                </div>
-                <div class="footer-social">
-                    <span class="social-text">Follow us:</span>
-                    <a href="#" class="social-link" aria-label="Follow us on Instagram">📸</a>
-                    <a href="#" class="social-link" aria-label="Follow us on TikTok">🎵</a>
-                    <a href="#" class="social-link" aria-label="Follow us on Twitter">🐦</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Back to Top Button -->
-    <button id="back-to-top" class="back-to-top" aria-label="Back to top" title="Back to top">
-        <span class="arrow-up">↑</span>
-    </button>
-
-    <!-- Preview Modal -->
-    <div id="preview-modal" class="preview-modal" role="dialog" aria-labelledby="preview-title" aria-hidden="true">
-        <div class="modal-overlay" onclick="closePreview()"></div>
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="preview-title">Sample Hair Analysis Preview</h3>
-                <button class="modal-close" onclick="closePreview()" aria-label="Close preview">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="preview-sample">
-                    <div class="sample-section">
-                        <h4>Your Hair Profile</h4>
-                        <div class="profile-item">
-                            <span class="profile-label">Hair Type:</span>
-                            <span class="profile-value">2B - Wavy, Medium Porosity</span>
-                        </div>
-                        <div class="profile-item">
-                            <span class="profile-label">Density:</span>
-                            <span class="profile-value">Medium to High</span>
-                        </div>
-                        <div class="profile-item">
-                            <span class="profile-label">Primary Concern:</span>
-                            <span class="profile-value">Frizz Control & Hydration</span>
-                        </div>
-                    </div>
-                    
-                    <div class="sample-section">
-                        <h4>Personalized Recommendations</h4>
-                        <div class="recommendation-item">
-                            <span class="rec-type">Shampoo:</span>
-                            <span class="rec-detail">Sulfate-free, moisturizing formula (2-3x/week)</span>
-                        </div>
-                        <div class="recommendation-item">
-                            <span class="rec-type">Conditioner:</span>
-                            <span class="rec-detail">Protein-moisture balanced, leave-in treatment</span>
-                        </div>
-                        <div class="recommendation-item">
-                            <span class="rec-type">Styling:</span>
-                            <span class="rec-detail">Curl cream + gel, scrunch with microfiber towel</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="preview-cta">
-                    <p>This is just a sample. Get your personalized analysis now!</p>
-                    <button class="cta-button" onclick="startQuiz(); closePreview();">
-                        Get My Real Analysis
-                    </button>
-                </div>
-            </div>
+        <div class="loading" id="loadingMessage">
+            <h3>Processing your hair analysis...</h3>
+            <p>Redirecting to secure payment...</p>
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="js/strandly.js"></script>
-    <script src="js/enhanced-landing.js"></script>
-    <script src="js/ux-director-mobile-optimization.js"></script>
-    
-    <!-- Accessibility: Skip to main content -->
-    <a href="#main-content" class="skip-link">Skip to main content</a>
-    
-    <div id="main-content"></div>
+    <script>
+        // Initialize Stripe (using test publishable key)
+        const stripe = Stripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
+        
+        document.getElementById('hairQuiz').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const loadingMessage = document.getElementById('loadingMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            const form = event.target;
+            
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing...';
+            errorMessage.textContent = '';
+            
+            // Collect form data
+            const formData = new FormData(form);
+            const answers = {};
+            
+            for (let [key, value] of formData.entries()) {
+                answers[key] = value;
+            }
+            
+            try {
+                // Create checkout session
+                const response = await fetch('http://localhost:10000/create-checkout-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(answers)
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                
+                const session = await response.json();
+                
+                // Show loading message
+                form.style.display = 'none';
+                loadingMessage.style.display = 'block';
+                
+                // Redirect to Stripe Checkout
+                const result = await stripe.redirectToCheckout({
+                    sessionId: session.id
+                });
+                
+                if (result.error) {
+                    throw new Error(result.error.message);
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                errorMessage.textContent = 'Something went wrong. Please try again.';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Get My Hair Analysis - $29';
+                form.style.display = 'block';
+                loadingMessage.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>

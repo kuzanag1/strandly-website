@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Successful - Strandly</title>
+    <title>Payment Cancelled - Strandly</title>
     <style>
         * {
             margin: 0;
@@ -31,9 +31,9 @@
             text-align: center;
         }
 
-        .success-icon {
+        .cancel-icon {
             font-size: 4rem;
-            color: #27ae60;
+            color: #e74c3c;
             margin-bottom: 20px;
         }
 
@@ -45,7 +45,7 @@
         }
 
         h1 {
-            color: #27ae60;
+            color: #e74c3c;
             font-size: 2rem;
             margin-bottom: 20px;
         }
@@ -58,28 +58,43 @@
         }
 
         .highlight {
-            background: #f8f9fa;
+            background: #fff5f5;
             padding: 20px;
             border-radius: 10px;
             margin: 20px 0;
-            border-left: 4px solid #27ae60;
+            border-left: 4px solid #e74c3c;
         }
 
-        .home-btn {
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
             display: inline-block;
-            background: linear-gradient(45deg, #3498db, #2980b9);
-            color: white;
             padding: 12px 30px;
             text-decoration: none;
             border-radius: 8px;
             font-weight: bold;
             transition: transform 0.3s, box-shadow 0.3s;
-            margin-top: 20px;
         }
 
-        .home-btn:hover {
+        .primary-btn {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            color: white;
+        }
+
+        .secondary-btn {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
         @media (max-width: 640px) {
@@ -95,25 +110,38 @@
             h1 {
                 font-size: 1.5rem;
             }
+
+            .btn-group {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 250px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="success-icon">✅</div>
+        <div class="cancel-icon">❌</div>
         <div class="logo">Strandly</div>
-        <h1>Payment Successful!</h1>
+        <h1>Payment Cancelled</h1>
         
-        <p>Thank you for your purchase! Your personalized hair care analysis is being generated right now.</p>
+        <p>No worries! Your payment was cancelled and no charge was made to your card.</p>
         
         <div class="highlight">
-            <p><strong>What happens next?</strong></p>
-            <p>You'll receive your detailed, personalized hair care analysis via email within the next few minutes. This includes custom product recommendations tailored specifically to your hair type, concerns, and goals.</p>
+            <p><strong>Ready to get your personalized hair analysis?</strong></p>
+            <p>Your quiz answers are saved. You can return to complete your purchase and receive your custom hair care recommendations for just $29.</p>
         </div>
         
-        <p>If you don't receive your analysis within 10 minutes, please check your spam folder or contact us at hello@strandly.shop</p>
+        <p>Questions? Contact us at hello@strandly.shop - we're here to help!</p>
         
-        <a href="index.html" class="home-btn">Back to Home</a>
+        <div class="btn-group">
+            <a href="index.html" class="btn primary-btn">Complete My Purchase</a>
+            <a href="index.html" class="btn secondary-btn">Back to Home</a>
+        </div>
     </div>
 </body>
 </html>
