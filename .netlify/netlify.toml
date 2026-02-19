@@ -9,7 +9,6 @@ redirects = []
 [build]
 publish = "/Users/tiagosimoes/.openclaw/workspace/deploy"
 publishOrigin = "default"
-base = "/Users/tiagosimoes/.openclaw/workspace/deploy"
 
 [build.environment]
 

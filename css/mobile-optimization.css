@@ -1,0 +1,392 @@
+/* Mobile-First Optimization for Strandly */
+/* Addresses conversion issues on mobile devices */
+
+/* Base Mobile Styles - Mobile First Approach */
+@media screen and (max-width: 768px) {
+    
+    /* Touch-Friendly Button Sizes */
+    .cta-button, .nav-btn, .unlock-analysis-btn, .continue-enhanced, .begin-analysis-btn {
+        min-height: 48px; /* Minimum touch target size */
+        padding: 15px 25px;
+        font-size: 16px;
+        border-radius: 12px;
+        width: 100%;
+        max-width: none;
+        margin: 10px 0;
+        display: block;
+        text-align: center;
+    }
+    
+    /* Large, prominent CTA for quiz start */
+    .hero .cta-button.large {
+        font-size: 18px;
+        padding: 20px 30px;
+        margin: 20px auto;
+        width: 90%;
+        max-width: 400px;
+    }
+    
+    /* Quiz Option Labels - Easier to Tap */
+    .option-label {
+        padding: 20px;
+        margin: 10px 0;
+        font-size: 16px;
+        line-height: 1.4;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: white;
+        border: 2px solid #e9ecef;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .option-label:active {
+        transform: scale(0.98);
+        background: #f8f9fa;
+    }
+    
+    .option-label.selected {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-color: #667eea;
+        transform: none;
+    }
+    
+    /* Hide radio buttons/checkboxes on mobile for cleaner look */
+    .option-label input[type="radio"],
+    .option-label input[type="checkbox"] {
+        display: none;
+    }
+    
+    /* Email Input Optimization */
+    .email-input-premium {
+        width: 100%;
+        padding: 18px 20px;
+        font-size: 16px; /* Prevents zoom on iOS */
+        border-radius: 10px;
+        border: 2px solid #ddd;
+        margin-bottom: 15px;
+        box-sizing: border-box;
+    }
+    
+    .email-capture-form {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    /* Mobile Navigation - Thumb Zone Optimization */
+    .quiz-navigation {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        padding: 20px;
+        border-top: 1px solid #e9ecef;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        z-index: 1000;
+    }
+    
+    .quiz-navigation .nav-btn {
+        width: calc(50% - 10px);
+        display: inline-block;
+        margin: 0 5px;
+        padding: 15px;
+        font-size: 16px;
+    }
+    
+    /* Add bottom padding to main content to account for fixed navigation */
+    .quiz-main {
+        padding-bottom: 100px;
+    }
+    
+    /* Progress Bar - More Prominent on Mobile */
+    .progress-container {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: white;
+        padding: 10px 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .progress-bar {
+        height: 8px;
+        border-radius: 4px;
+        background: #e9ecef;
+        margin: 0 20px;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 4px;
+        transition: width 0.5s ease;
+    }
+    
+    /* Question Counter - More Visible */
+    #question-counter {
+        font-size: 18px;
+        font-weight: bold;
+        color: #667eea;
+    }
+    
+    /* Hero Section Mobile Optimization */
+    .hero-title {
+        font-size: 2.2em;
+        line-height: 1.2;
+        margin-bottom: 20px;
+    }
+    
+    .hero-subtitle {
+        font-size: 16px;
+        line-height: 1.5;
+        margin-bottom: 25px;
+    }
+    
+    /* Value Stack - Simplified for Mobile */
+    .value-stack {
+        margin: 25px 0;
+    }
+    
+    .value-point {
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        font-size: 14px;
+    }
+    
+    .value-icon {
+        font-size: 20px;
+        margin-right: 10px;
+    }
+    
+    /* Social Proof - Stack Vertically */
+    .social-proof-line {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 15px;
+    }
+    
+    /* Email Unlock Section - Mobile Optimized */
+    .email-unlock-section {
+        margin: 20px -20px; /* Extend to screen edges */
+        border-radius: 0;
+        padding: 30px 20px;
+    }
+    
+    .preview-results-teaser h3 {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+    
+    .analysis-preview {
+        margin: 20px 0;
+        padding: 20px;
+    }
+    
+    .trust-signals {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+    }
+    
+    /* Enhanced Analysis Offer - Mobile Stack */
+    .basic-vs-enhanced {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .analysis-tier.enhanced {
+        transform: none;
+        order: -1; /* Show enhanced option first */
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+    }
+    
+    /* Typography Adjustments */
+    h1, h2, h3 {
+        line-height: 1.3;
+    }
+    
+    p {
+        font-size: 16px;
+        line-height: 1.6;
+    }
+    
+    /* Container Padding */
+    .container {
+        padding: 0 20px;
+    }
+    
+    /* Quiz Question Text */
+    .question-text {
+        font-size: 20px;
+        line-height: 1.4;
+        margin-bottom: 25px;
+        color: #333;
+        text-align: center;
+    }
+    
+    /* Fix for iOS Safari Bottom Bar */
+    @supports (padding: max(0px)) {
+        .quiz-navigation {
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+        }
+        
+        .quiz-main {
+            padding-bottom: max(100px, calc(100px + env(safe-area-inset-bottom)));
+        }
+    }
+}
+
+/* Tablet Specific Adjustments */
+@media screen and (min-width: 481px) and (max-width: 768px) {
+    .basic-vs-enhanced {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .email-capture-form {
+        flex-direction: row;
+    }
+    
+    .email-input-premium {
+        margin-bottom: 0;
+    }
+    
+    .quiz-navigation .nav-btn {
+        width: auto;
+        min-width: 120px;
+    }
+}
+
+/* Large Mobile Screens */
+@media screen and (max-width: 480px) {
+    .hero-title {
+        font-size: 1.9em;
+    }
+    
+    .question-text {
+        font-size: 18px;
+    }
+    
+    .option-label {
+        padding: 18px 15px;
+        font-size: 15px;
+    }
+    
+    .email-unlock-section {
+        padding: 25px 15px;
+    }
+    
+    .preview-results-teaser h3 {
+        font-size: 22px;
+    }
+}
+
+/* One-Handed Usage Optimizations */
+.thumb-zone {
+    /* Easy reach zone for thumb */
+    position: relative;
+    bottom: 0;
+}
+
+/* Swipe Gesture Support */
+.quiz-container {
+    touch-action: pan-y;
+}
+
+.question-display {
+    min-height: 50vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Loading States for Mobile */
+.loading-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+}
+
+.loading-state::after {
+    content: "";
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #667eea;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-left: 10px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Error States */
+.error-message {
+    background: #fff3cd;
+    color: #856404;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 15px 0;
+    text-align: center;
+    border-left: 4px solid #ffc107;
+}
+
+/* Success States */
+.success-message {
+    background: #d4edda;
+    color: #155724;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 15px 0;
+    text-align: center;
+    border-left: 4px solid #28a745;
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .option-label {
+        border-width: 3px;
+    }
+    
+    .option-label.selected {
+        border-width: 3px;
+        border-color: #000;
+    }
+    
+    .cta-button {
+        border: 2px solid #000;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .option-label {
+        background: #2d3748;
+        color: white;
+        border-color: #4a5568;
+    }
+    
+    .quiz-navigation {
+        background: #2d3748;
+        border-color: #4a5568;
+    }
+    
+    .progress-container {
+        background: #2d3748;
+        border-color: #4a5568;
+    }
+}

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strandly - Your Hair, Decoded</title>
+    <!-- CACHE BUSTER: Emergency pricing fix deployed - $29 USD -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/strandly.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h1 class="gradient-text" style="font-size: 1.8rem; margin: 0;">Strandly</h1>
+            </div>
+            <div class="nav-links">
+                <a href="#how-it-works">How It Works</a>
+                <a href="#science">The Science</a>
+                <button class="cta-button small" onclick="startQuiz()">Start Analysis</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">Your hair, <span class="gradient-text">decoded</span></h1>
+                <p class="hero-subtitle">Get personalized hair care recommendations powered by science, not guesswork. Better than salon consultations at a fraction of the cost.</p>
+                <div class="hero-cta">
+                    <button class="cta-button large" onclick="startQuiz()">
+                        🧬 Discover Your Hair Type
+                        <span class="cta-subtext">Takes 2 minutes</span>
+                    </button>
+                </div>
+                <div class="trust-indicators">
+                    <span><img src="images/dna-icon.png" alt="DNA" class="trust-icon"> Science-backed</span>
+                    <span>⚡ Instant results</span>
+                    <span>💰 Only $29</span>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="hero-image-container">
+                    <img src="images/hero-main.jpg" alt="Beautiful healthy hair analysis" class="hero-main-image">
+                    <div class="hair-types-overlay">
+                        <img src="images/hair-types.png" alt="Hair types analysis" class="hair-types-image">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Value Propositions -->
+    <section class="value-props">
+        <div class="container">
+            <h2 class="section-title">Why thousands choose Strandly over expensive salon consultations</h2>
+            <div class="value-grid">
+                <div class="value-card">
+                    <div class="value-icon">🧬</div>
+                    <h3>Science-Backed Analysis</h3>
+                    <p>Our quiz analyzes porosity, density, and damage patterns that 90% of products ignore</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">🎯</div>
+                    <h3>Personalized Recommendations</h3>
+                    <p>Custom routines based on your unique hair profile, lifestyle, and environment</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">💰</div>
+                    <h3>Fraction of Salon Cost</h3>
+                    <p>Get better insights than a $200 consultation for just $29</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">⚡</div>
+                    <h3>Results in Minutes</h3>
+                    <p>Complete analysis and custom routine delivered instantly to your inbox</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">How Strandly works</h2>
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Take Our Smart Quiz</h3>
+                        <p>Answer 10 carefully crafted questions about your hair characteristics, lifestyle, and concerns</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Get Your Hair Profile</h3>
+                        <p>Our algorithm analyzes your porosity, density, curl pattern, and damage level</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Receive Custom Routine</h3>
+                        <p>Detailed morning and evening routines with specific product recommendations</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>See Real Results</h3>
+                        <p>Follow your personalized routine and watch your hair transform in weeks</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Proof -->
+    <section class="testimonials">
+        <div class="container">
+            <h2 class="section-title">What our users say</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial">
+                    <div class="stars">★★★★★</div>
+                    <p>"Better than my $200 salon consultation. The porosity test was a game-changer!"</p>
+                    <span class="author">- Sarah M.</span>
+                </div>
+                <div class="testimonial">
+                    <div class="stars">★★★★★</div>
+                    <p>"Finally found products that actually work for my hair type. Worth every penny."</p>
+                    <span class="author">- Jessica L.</span>
+                </div>
+                <div class="testimonial">
+                    <div class="stars">★★★★★</div>
+                    <p>"The science behind it is incredible. My hair has never looked better."</p>
+                    <span class="author">- Marcus T.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Science Section -->
+    <section id="science" class="science-section">
+        <div class="container">
+            <h2 class="section-title">The Science Behind Strandly</h2>
+            <div class="science-content">
+                <div class="science-text">
+                    <h3>Why Most Hair Products Fail</h3>
+                    <p>Traditional hair care ignores the three critical factors that determine what products will actually work for you:</p>
+                    <ul>
+                        <li><strong>Porosity:</strong> How your hair absorbs and retains moisture</li>
+                        <li><strong>Density:</strong> How much hair you actually have</li>
+                        <li><strong>Damage Patterns:</strong> Where your hair needs the most help</li>
+                    </ul>
+                    <p>Our analysis considers all these factors plus your environment, lifestyle, and styling habits.</p>
+                </div>
+                <div class="science-visual">
+                    <div class="hair-science-diagram">
+                        <div class="hair-strand">
+                            <div class="cuticle">Cuticle Layer</div>
+                            <div class="cortex">Cortex</div>
+                            <div class="medulla">Medulla</div>
+                        </div>
+                        <p class="diagram-caption">We analyze your hair at the molecular level</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to decode your hair?</h2>
+                <p>Join thousands who've discovered their perfect hair routine</p>
+                <button class="cta-button large" onclick="startQuiz()">
+                    Start Your Hair Analysis
+                    <span class="cta-subtext">Results in 2 minutes • Only $29</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>Strandly</h3>
+                    <p>Your hair, decoded</p>
+                </div>
+                <div class="footer-links">
+                    <a href="/privacy">Privacy Policy</a>
+                    <a href="/terms">Terms of Service</a>
+                    <a href="/contact">Contact</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Strandly. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/strandly.js"></script>
+</body>
+</html><!-- EMERGENCY CACHE BUST: 1771412731 - ALL PRICING IS  USD -->
