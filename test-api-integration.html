@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Integration Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-result { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Strandly API Integration Test</h1>
+    
+    <div id="test-results"></div>
+    
+    <button onclick="runTests()">Run Tests</button>
+
+    <!-- Load the same scripts as results.html -->
+    <script>
+        window.STRANDLY_CONFIG = {
+            api: {
+                baseUrl: 'https://strandly-backend.onrender.com/api'
+            }
+        };
+    </script>
+    <script src="js/api-service.js"></script>
+    
+    <script>
+        function log(message, type = 'info') {
+            const resultsDiv = document.getElementById('test-results');
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.textContent = message;
+            resultsDiv.appendChild(div);
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        async function runTests() {
+            document.getElementById('test-results').innerHTML = '';
+            log('🚀 Starting API Integration Tests...');
+
+            // Test 1: Check if API service exists
+            try {
+                if (window.StrandlyApi) {
+                    log('✅ StrandlyApi global object exists', 'success');
+                } else {
+                    log('❌ StrandlyApi global object not found', 'error');
+                    return;
+                }
+            } catch (error) {
+                log(`❌ Error accessing StrandlyApi: ${error.message}`, 'error');
+                return;
+            }
+
+            // Test 2: Check if isAuthenticated method exists
+            try {
+                if (typeof window.StrandlyApi.isAuthenticated === 'function') {
+                    log('✅ isAuthenticated method exists', 'success');
+                    
+                    // Test calling the method
+                    const isAuth = window.StrandlyApi.isAuthenticated();
+                    log(`📊 isAuthenticated() returned: ${isAuth}`, 'info');
+                } else {
+                    log('❌ isAuthenticated method not found', 'error');
+                }
+            } catch (error) {
+                log(`❌ Error testing isAuthenticated: ${error.message}`, 'error');
+            }
+
+            // Test 3: Check if getCurrentUser method exists
+            try {
+                if (typeof window.StrandlyApi.getCurrentUser === 'function') {
+                    log('✅ getCurrentUser method exists', 'success');
+                } else {
+                    log('❌ getCurrentUser method not found', 'error');
+                }
+            } catch (error) {
+                log(`❌ Error testing getCurrentUser: ${error.message}`, 'error');
+            }
+
+            // Test 4: Test results manager integration
+            try {
+                // Create a mock results manager to test the integration
+                class TestResultsManager {
+                    constructor() {
+                        this.apiService = window.StrandlyApi;
+                    }
+                    
+                    testApiIntegration() {
+                        // This is the line that was failing before
+                        return this.apiService.isAuthenticated();
+                    }
+                }
+                
+                const testManager = new TestResultsManager();
+                const result = testManager.testApiIntegration();
+                log('✅ Results manager can call isAuthenticated without errors', 'success');
+                log(`📊 Integration test result: ${result}`, 'info');
+            } catch (error) {
+                log(`❌ Results manager integration failed: ${error.message}`, 'error');
+            }
+
+            // Test 5: Backend connectivity
+            try {
+                log('🌐 Testing backend connectivity...', 'info');
+                const health = await window.StrandlyApi.checkHealth();
+                if (health) {
+                    log('✅ Backend health check completed', 'success');
+                    log(`📊 Health status: ${health.status || 'unknown'}`, 'info');
+                } else {
+                    log('⚠️ Backend health check returned null', 'error');
+                }
+            } catch (error) {
+                log(`⚠️ Backend connectivity issue (expected in some cases): ${error.message}`, 'info');
+            }
+
+            log('🏁 API Integration Tests Complete!', 'success');
+        }
+
+        // Auto-run tests when page loads
+        window.addEventListener('load', function() {
+            setTimeout(runTests, 500);
+        });
+    </script>
+</body>
+</html>
