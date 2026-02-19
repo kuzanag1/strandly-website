@@ -3,553 +3,560 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Complete Your Hair Analysis - Strandly</title>
+    <title>Complete Your Hair Analysis - Secure Checkout | Strandly</title>
+    <meta name="description" content="Complete your personalized hair analysis payment. Secure checkout with SSL encryption. Get your results instantly.">
+    
+    <!-- Enhanced SEO and Social Meta -->
+    <meta property="og:title" content="Complete Your Hair Analysis - Strandly">
+    <meta property="og:description" content="Secure checkout for your personalized hair analysis. Results delivered instantly.">
+    <meta property="og:type" content="website">
+    
+    <!-- Security and Trust -->
+    <meta name="robots" content="noindex, nofollow">
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/strandly.css">
-    <script src="https://js.stripe.com/v3/"></script>
-    <style>
-        .payment-container {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 1rem;
-        }
-
-        .payment-card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            max-width: 500px;
-            width: 100%;
-            overflow: hidden;
-        }
-
-        .payment-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 2.5rem 2rem;
-            text-align: center;
-        }
-
-        .payment-header h1 {
-            margin: 0 0 0.5rem 0;
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
-
-        .payment-header p {
-            margin: 0;
-            opacity: 0.9;
-            font-size: 1rem;
-        }
-
-        .price-display {
-            margin: 1.5rem 0;
-            padding: 1rem;
-            background: rgba(255,255,255,0.2);
-            border-radius: 10px;
-        }
-
-        .price-amount {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin: 0;
-        }
-
-        .price-description {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            margin: 0.5rem 0 0 0;
-        }
-
-        .payment-body {
-            padding: 2rem;
-        }
-
-        .order-summary {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .order-summary h3 {
-            margin: 0 0 1rem 0;
-            color: #495057;
-            font-size: 1.1rem;
-        }
-
-        .order-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #e9ecef;
-        }
-
-        .order-item:last-child {
-            border-bottom: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            color: #495057;
-        }
-
-        .item-details h4 {
-            margin: 0 0 0.25rem 0;
-            color: #495057;
-        }
-
-        .item-details p {
-            margin: 0;
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-
-        .payment-form {
-            margin-top: 1.5rem;
-        }
-
-        .form-section {
-            margin-bottom: 2rem;
-        }
-
-        .form-section h3 {
-            margin: 0 0 1rem 0;
-            color: #495057;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .security-badge {
-            background: #28a745;
-            color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .stripe-element {
-            background: white;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            transition: border-color 0.3s ease;
-        }
-
-        .stripe-element.focused {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .stripe-element.invalid {
-            border-color: #dc3545;
-        }
-
-        .payment-error {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            margin: 1rem 0;
-            border: 1px solid #f5c6cb;
-        }
-
-        .payment-button {
-            width: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .payment-button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-        }
-
-        .payment-button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .loading-spinner {
-            width: 20px;
-            height: 20px;
-            border: 2px solid transparent;
-            border-top: 2px solid white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .security-info {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            background: #f8f9fa;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .security-info p {
-            margin: 0;
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-
-        .security-badges {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 0.5rem;
-        }
-
-        .badge {
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-        }
-
-        .badge-secure {
-            background: #28a745;
-            color: white;
-        }
-
-        .badge-encrypted {
-            background: #17a2b8;
-            color: white;
-        }
-
-        .back-link {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 500;
-            margin-bottom: 2rem;
-            display: inline-block;
-            transition: color 0.3s ease;
-        }
-
-        .back-link:hover {
-            color: #764ba2;
-        }
-
-        /* Mobile responsiveness */
-        @media (max-width: 768px) {
-            .payment-container {
-                padding: 1rem;
-            }
-
-            .payment-card {
-                margin: 0;
-            }
-
-            .payment-header {
-                padding: 2rem 1.5rem;
-            }
-
-            .payment-header h1 {
-                font-size: 1.5rem;
-            }
-
-            .price-amount {
-                font-size: 2rem;
-            }
-
-            .payment-body {
-                padding: 1.5rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="payment-container">
-        <div class="payment-card">
-            <div class="payment-header">
-                <h1>🌟 Complete Your Hair Analysis</h1>
-                <p>Get your personalized recommendations in minutes</p>
-                
-                <div class="price-display">
-                    <div class="price-amount">$29</div>
-                    <div class="price-description">One-time payment • Expert analysis included</div>
-                </div>
-            </div>
-
-            <div class="payment-body">
-                <a href="quiz.html" class="back-link">← Back to Quiz</a>
-
-                <div class="order-summary">
-                    <h3>Order Summary</h3>
-                    <div class="order-item">
-                        <div class="item-details">
-                            <h4>Professional Hair Analysis</h4>
-                            <p>Personalized recommendations based on your quiz</p>
-                        </div>
-                        <span>$29.00</span>
-                    </div>
-                    <div class="order-item">
-                        <strong>Total</strong>
-                        <strong>$29.00</strong>
-                    </div>
-                </div>
-
-                <form id="payment-form" class="payment-form">
-                    <div class="form-section">
-                        <h3>
-                            💳 Payment Details 
-                            <span class="security-badge">🔒 Secure</span>
-                        </h3>
-                        
-                        <div id="card-element" class="stripe-element">
-                            <!-- Stripe Elements will create form elements here -->
-                        </div>
-                        
-                        <div id="card-errors" role="alert" class="payment-error" style="display: none;"></div>
-                    </div>
-
-                    <button id="submit-payment" class="payment-button" type="submit">
-                        <span class="button-text">Complete Payment - $29</span>
-                        <div class="loading-spinner" style="display: none;"></div>
-                    </button>
-                </form>
-
-                <div class="security-info">
-                    <p>Your payment is secure and encrypted</p>
-                    <div class="security-badges">
-                        <span class="badge badge-secure">🔒 SSL Encrypted</span>
-                        <span class="badge badge-encrypted">Stripe Verified</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Loading overlay -->
-    <div id="loading-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; display: flex; align-items: center; justify-content: center;">
-        <div style="background: white; padding: 2rem; border-radius: 10px; text-align: center;">
-            <div class="loading-spinner" style="margin: 0 auto 1rem;"></div>
-            <p>Processing your payment...</p>
-        </div>
-    </div>
-
-    <script src="js/config.js"></script>
-    <script src="js/api-service.js"></script>
-    <script src="js/payment-integration.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Payment Page JavaScript -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('💳 Payment page loaded');
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/strandly.css">
+    <link rel="stylesheet" href="css/enhanced-landing.css">
+    <link rel="stylesheet" href="css/enhanced-payment.css">
+    <link rel="stylesheet" href="css/mobile-optimization.css">
+    <link rel="stylesheet" href="css/mobile-emergency-fix.css">
+    <link rel="stylesheet" href="css/payment-mobile-emergency.css">
+    
+    <!-- Stripe.js -->
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body class="payment-page">
+    <!-- Enhanced Navigation Header -->
+    <nav class="payment-navbar" role="navigation" aria-label="Payment navigation">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h1 class="gradient-text brand-logo">Strandly</h1>
+                <span class="tagline">Secure Checkout</span>
+            </div>
             
-            // Check if user came from quiz completion
-            const hasQuizAnswers = localStorage.getItem('strandly_quiz_answers');
-            const quizCompleted = localStorage.getItem('strandly_quiz_completed');
-            
-            if (!hasQuizAnswers && !quizCompleted) {
-                console.warn('⚠️ No quiz data found, redirecting to quiz');
-                // Show warning and redirect to quiz
-                document.querySelector('.payment-card').innerHTML = `
-                    <div style="padding: 3rem; text-align: center;">
-                        <h2>⚠️ Quiz Required</h2>
-                        <p>You need to complete the hair analysis quiz before payment.</p>
-                        <button onclick="window.location.href='quiz.html'" class="payment-button">
-                            Take Quiz First
-                        </button>
+            <!-- Trust Indicators in Header -->
+            <div class="header-trust">
+                <div class="trust-item">
+                    <span class="trust-icon">🔒</span>
+                    <span class="trust-text">SSL Secured</span>
+                </div>
+                <div class="trust-item">
+                    <span class="trust-icon">💳</span>
+                    <span class="trust-text">Safe Payment</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Security Trust Banner -->
+    <div class="security-banner">
+        <div class="container">
+            <div class="security-content">
+                <span class="security-icon">🛡️</span>
+                <span class="security-text">Your payment is protected by bank-level SSL encryption</span>
+                <div class="security-badges">
+                    <span class="badge">256-bit SSL</span>
+                    <span class="badge">PCI Compliant</span>
+                    <span class="badge">Stripe Secure</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Content -->
+    <main class="payment-main" role="main">
+        <div class="container">
+            <div class="payment-container">
+                
+                <!-- Left Column: Order Summary & Trust -->
+                <div class="order-summary-section">
+                    <div class="order-summary-card">
+                        <div class="summary-header">
+                            <h2>Your Hair Analysis</h2>
+                            <div class="summary-badge">Complete Package</div>
+                        </div>
+                        
+                        <div class="summary-content">
+                            <div class="analysis-preview">
+                                <div class="preview-icon">🧬</div>
+                                <div class="preview-details">
+                                    <h3>Personalized Hair Profile</h3>
+                                    <p>Complete analysis of your unique hair characteristics</p>
+                                </div>
+                            </div>
+                            
+                            <div class="included-items">
+                                <h4>What You'll Receive:</h4>
+                                <ul class="included-list">
+                                    <li class="included-item">
+                                        <span class="item-icon">✅</span>
+                                        <span class="item-text">Detailed hair type analysis</span>
+                                    </li>
+                                    <li class="included-item">
+                                        <span class="item-icon">✅</span>
+                                        <span class="item-text">Personalized product recommendations</span>
+                                    </li>
+                                    <li class="included-item">
+                                        <span class="item-icon">✅</span>
+                                        <span class="item-text">Custom morning & evening routines</span>
+                                    </li>
+                                    <li class="included-item">
+                                        <span class="item-icon">✅</span>
+                                        <span class="item-text">Styling tips & techniques</span>
+                                    </li>
+                                    <li class="included-item">
+                                        <span class="item-icon">✅</span>
+                                        <span class="item-text">Shopping guide with links</span>
+                                    </li>
+                                    <li class="included-item">
+                                        <span class="item-icon">✅</span>
+                                        <span class="item-text">Expert support via email</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div class="pricing-breakdown">
+                                <div class="price-row">
+                                    <span class="price-label">Hair Analysis</span>
+                                    <span class="price-value">$29.00</span>
+                                </div>
+                                <div class="price-row comparison">
+                                    <span class="price-label">Salon Consultation</span>
+                                    <span class="price-value old-price">$200.00</span>
+                                </div>
+                                <div class="savings-highlight">
+                                    <span class="savings-text">You Save: $171</span>
+                                </div>
+                                <div class="price-row total">
+                                    <span class="price-label">Total Today</span>
+                                    <span class="price-value">$29.00</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                `;
-                return;
-            }
+                    
+                    <!-- Trust & Guarantees -->
+                    <div class="trust-card">
+                        <h3>Your Satisfaction is Guaranteed</h3>
+                        <div class="guarantee-items">
+                            <div class="guarantee-item">
+                                <span class="guarantee-icon">💰</span>
+                                <div class="guarantee-content">
+                                    <strong>30-Day Money Back Guarantee</strong>
+                                    <p>Not satisfied? Get a full refund, no questions asked.</p>
+                                </div>
+                            </div>
+                            <div class="guarantee-item">
+                                <span class="guarantee-icon">⚡</span>
+                                <div class="guarantee-content">
+                                    <strong>Instant Results</strong>
+                                    <p>Your analysis will be delivered to your email within minutes.</p>
+                                </div>
+                            </div>
+                            <div class="guarantee-item">
+                                <span class="guarantee-icon">🔒</span>
+                                <div class="guarantee-content">
+                                    <strong>100% Secure & Private</strong>
+                                    <p>Your personal information is encrypted and never shared.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Social Proof -->
+                    <div class="social-proof-card">
+                        <h3>Join Thousands of Happy Customers</h3>
+                        <div class="testimonial-mini">
+                            <div class="stars">★★★★★</div>
+                            <p>"Best $29 I've ever spent on my hair! The recommendations were spot on."</p>
+                            <span class="author">- Sarah M., Verified Customer</span>
+                        </div>
+                        <div class="stats-row">
+                            <div class="stat-item">
+                                <span class="stat-number">12,847</span>
+                                <span class="stat-label">Analyses Completed</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">4.8/5</span>
+                                <span class="stat-label">Customer Rating</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Column: Payment Form -->
+                <div class="payment-form-section">
+                    <div class="payment-form-card">
+                        <div class="form-header">
+                            <h2>Complete Your Order</h2>
+                            <div class="security-notice">
+                                <span class="security-icon">🔐</span>
+                                <span>Secured by Stripe</span>
+                            </div>
+                        </div>
+                        
+                        <form id="payment-form" class="enhanced-payment-form" novalidate>
+                            <!-- Customer Information -->
+                            <div class="form-section">
+                                <h3 class="section-title">
+                                    <span class="section-number">1</span>
+                                    Customer Information
+                                </h3>
+                                
+                                <div class="form-group">
+                                    <label for="customer-name" class="form-label">
+                                        Full Name
+                                        <span class="required">*</span>
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        id="customer-name" 
+                                        name="customerName" 
+                                        class="form-input"
+                                        required
+                                        autocomplete="name"
+                                        placeholder="Enter your full name"
+                                        aria-describedby="name-error"
+                                    >
+                                    <div id="name-error" class="error-message" aria-live="polite"></div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="customer-email" class="form-label">
+                                        Email Address
+                                        <span class="required">*</span>
+                                    </label>
+                                    <input 
+                                        type="email" 
+                                        id="customer-email" 
+                                        name="customerEmail" 
+                                        class="form-input"
+                                        required
+                                        autocomplete="email"
+                                        placeholder="your.email@example.com"
+                                        aria-describedby="email-error email-help"
+                                    >
+                                    <div id="email-help" class="input-help">
+                                        Your analysis results will be sent here
+                                    </div>
+                                    <div id="email-error" class="error-message" aria-live="polite"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Payment Information -->
+                            <div class="form-section">
+                                <h3 class="section-title">
+                                    <span class="section-number">2</span>
+                                    Payment Information
+                                </h3>
+                                
+                                <div class="payment-methods">
+                                    <div class="accepted-cards">
+                                        <span class="cards-label">We accept:</span>
+                                        <div class="card-icons">
+                                            <span class="card-icon visa" aria-label="Visa">💳</span>
+                                            <span class="card-icon mastercard" aria-label="Mastercard">💳</span>
+                                            <span class="card-icon amex" aria-label="American Express">💳</span>
+                                            <span class="card-icon discover" aria-label="Discover">💳</span>
+                                            <span class="card-icon apple-pay" aria-label="Apple Pay">📱</span>
+                                            <span class="card-icon google-pay" aria-label="Google Pay">📱</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Stripe Elements Container -->
+                                <div class="stripe-elements-container">
+                                    <div class="form-group">
+                                        <label for="card-element" class="form-label">
+                                            Card Information
+                                            <span class="required">*</span>
+                                        </label>
+                                        <div id="card-element" class="stripe-element">
+                                            <!-- Stripe Elements will create form elements here -->
+                                        </div>
+                                        <div id="card-errors" class="error-message" role="alert" aria-live="assertive"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group half-width">
+                                        <label for="billing-zip" class="form-label">
+                                            Billing ZIP Code
+                                            <span class="required">*</span>
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            id="billing-zip" 
+                                            name="billingZip" 
+                                            class="form-input"
+                                            required
+                                            autocomplete="postal-code"
+                                            placeholder="12345"
+                                            aria-describedby="zip-error"
+                                        >
+                                        <div id="zip-error" class="error-message" aria-live="polite"></div>
+                                    </div>
+                                    <div class="form-group half-width">
+                                        <label for="billing-country" class="form-label">
+                                            Country
+                                            <span class="required">*</span>
+                                        </label>
+                                        <select 
+                                            id="billing-country" 
+                                            name="billingCountry" 
+                                            class="form-select"
+                                            required
+                                            aria-describedby="country-error"
+                                        >
+                                            <option value="">Select Country</option>
+                                            <option value="US">United States</option>
+                                            <option value="CA">Canada</option>
+                                            <option value="GB">United Kingdom</option>
+                                            <option value="AU">Australia</option>
+                                            <option value="DE">Germany</option>
+                                            <option value="FR">France</option>
+                                            <option value="IT">Italy</option>
+                                            <option value="ES">Spain</option>
+                                            <option value="NL">Netherlands</option>
+                                            <option value="SE">Sweden</option>
+                                            <option value="NO">Norway</option>
+                                            <option value="DK">Denmark</option>
+                                            <option value="FI">Finland</option>
+                                        </select>
+                                        <div id="country-error" class="error-message" aria-live="polite"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Order Confirmation -->
+                            <div class="form-section">
+                                <h3 class="section-title">
+                                    <span class="section-number">3</span>
+                                    Order Confirmation
+                                </h3>
+                                
+                                <div class="order-confirmation">
+                                    <div class="confirmation-item">
+                                        <span class="confirmation-label">Service:</span>
+                                        <span class="confirmation-value">Personalized Hair Analysis</span>
+                                    </div>
+                                    <div class="confirmation-item">
+                                        <span class="confirmation-label">Price:</span>
+                                        <span class="confirmation-value">$29.00 USD</span>
+                                    </div>
+                                    <div class="confirmation-item">
+                                        <span class="confirmation-label">Delivery:</span>
+                                        <span class="confirmation-value">Instant (via email)</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="terms-agreement">
+                                    <label class="checkbox-label">
+                                        <input 
+                                            type="checkbox" 
+                                            id="terms-agreement" 
+                                            name="termsAgreement"
+                                            class="checkbox-input"
+                                            required
+                                            aria-describedby="terms-error"
+                                        >
+                                        <span class="checkbox-custom"></span>
+                                        <span class="checkbox-text">
+                                            I agree to the 
+                                            <a href="/terms" target="_blank" rel="noopener">Terms of Service</a> and 
+                                            <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>
+                                            <span class="required">*</span>
+                                        </span>
+                                    </label>
+                                    <div id="terms-error" class="error-message" aria-live="polite"></div>
+                                </div>
+                                
+                                <div class="marketing-consent">
+                                    <label class="checkbox-label">
+                                        <input 
+                                            type="checkbox" 
+                                            id="marketing-consent" 
+                                            name="marketingConsent"
+                                            class="checkbox-input"
+                                        >
+                                        <span class="checkbox-custom"></span>
+                                        <span class="checkbox-text">
+                                            Send me hair care tips and product updates (optional)
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Submit Button -->
+                            <div class="form-section">
+                                <button type="submit" id="submit-payment" class="payment-submit-btn">
+                                    <span class="btn-content">
+                                        <span class="btn-icon">🔒</span>
+                                        <span class="btn-text">Complete Secure Payment</span>
+                                        <span class="btn-price">$29.00</span>
+                                    </span>
+                                    <div class="btn-loader" aria-hidden="true">
+                                        <div class="loader-spinner"></div>
+                                        <span class="loader-text">Processing...</span>
+                                    </div>
+                                </button>
+                                
+                                <div class="payment-security-note">
+                                    <span class="security-icon">🛡️</span>
+                                    <span class="security-text">
+                                        Your payment information is encrypted and secure. 
+                                        We never store your card details.
+                                    </span>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Additional Security & Support Info -->
+                    <div class="security-support-info">
+                        <div class="security-features">
+                            <h4>Security Features</h4>
+                            <ul class="security-list">
+                                <li>
+                                    <span class="feature-icon">🔐</span>
+                                    <span>256-bit SSL encryption</span>
+                                </li>
+                                <li>
+                                    <span class="feature-icon">🛡️</span>
+                                    <span>PCI DSS compliant</span>
+                                </li>
+                                <li>
+                                    <span class="feature-icon">🏦</span>
+                                    <span>Bank-level security</span>
+                                </li>
+                                <li>
+                                    <span class="feature-icon">🔒</span>
+                                    <span>No card details stored</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="support-info">
+                            <h4>Need Help?</h4>
+                            <p>Our customer support team is here to help:</p>
+                            <div class="support-contact">
+                                <a href="mailto:support@strandly.com" class="support-link">
+                                    <span class="support-icon">📧</span>
+                                    <span>support@strandly.com</span>
+                                </a>
+                                <div class="support-hours">
+                                    <span class="hours-icon">🕒</span>
+                                    <span>24/7 email support</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Trust Footer -->
+    <footer class="payment-footer">
+        <div class="container">
+            <div class="footer-trust-badges">
+                <div class="trust-badge">
+                    <span class="badge-icon">🔒</span>
+                    <span class="badge-text">SSL Secured</span>
+                </div>
+                <div class="trust-badge">
+                    <span class="badge-icon">✅</span>
+                    <span class="badge-text">PCI Compliant</span>
+                </div>
+                <div class="trust-badge">
+                    <span class="badge-icon">💳</span>
+                    <span class="badge-text">Stripe Powered</span>
+                </div>
+                <div class="trust-badge">
+                    <span class="badge-icon">💰</span>
+                    <span class="badge-text">Money Back Guarantee</span>
+                </div>
+            </div>
             
-            // Initialize Stripe payment
-            initializePayment();
+            <div class="footer-links">
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+                <a href="/refund">Refund Policy</a>
+                <a href="/contact">Contact Support</a>
+            </div>
+            
+            <div class="footer-copyright">
+                <p>&copy; 2026 Strandly. All rights reserved. Secure payments processed by Stripe.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Progress Indicator for Loading States -->
+    <div id="page-loader" class="page-loader" aria-hidden="true">
+        <div class="loader-content">
+            <div class="loader-spinner-large"></div>
+            <h3>Processing Your Payment</h3>
+            <p>Please don't refresh or close this page...</p>
+        </div>
+    </div>
+
+    <!-- Enhanced Error Modal -->
+    <div id="error-modal" class="error-modal" role="dialog" aria-labelledby="error-title" aria-hidden="true">
+        <div class="modal-overlay" onclick="closeErrorModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="error-title">Payment Error</h3>
+                <button class="modal-close" onclick="closeErrorModal()" aria-label="Close error message">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="error-icon">⚠️</div>
+                <div id="error-message" class="error-text"></div>
+                <div class="error-suggestions">
+                    <h4>What you can try:</h4>
+                    <ul id="error-suggestions-list">
+                        <!-- Suggestions will be populated by JavaScript -->
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeErrorModal()">Close</button>
+                <button class="btn-primary" onclick="retryPayment()">Try Again</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Confirmation -->
+    <div id="success-confirmation" class="success-confirmation" aria-hidden="true">
+        <div class="success-content">
+            <div class="success-icon">✅</div>
+            <h2>Payment Successful!</h2>
+            <p>Your hair analysis is being prepared...</p>
+            <div class="success-details">
+                <p>You'll receive your personalized hair profile at:</p>
+                <strong id="confirmation-email"></strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/enhanced-payment.js"></script>
+    
+    <!-- Analytics and Error Tracking -->
+    <script>
+        // Enhanced error tracking
+        window.addEventListener('error', (event) => {
+            console.error('Payment page error:', event.error);
         });
         
-        async function initializePayment() {
-            try {
-                console.log('🔄 Initializing payment system...');
-                
-                // Check if Stripe is loaded
-                if (typeof Stripe === 'undefined') {
-                    throw new Error('Stripe not loaded');
-                }
-                
-                // Get Stripe publishable key
-                const stripeKey = window.StrandlyConfig?.STRIPE?.publishableKey;
-                if (!stripeKey) {
-                    console.error('❌ Stripe key not configured');
-                    showPaymentError('Payment system configuration error');
-                    return;
-                }
-                
-                // Initialize Stripe
-                const stripe = Stripe(stripeKey);
-                window.stripeInstance = stripe;
-                
-                // Setup payment form
-                setupPaymentForm(stripe);
-                
-                console.log('✅ Payment system initialized');
-            } catch (error) {
-                console.error('❌ Payment initialization failed:', error);
-                showPaymentError('Unable to initialize payment system');
-            }
-        }
-        
-        function setupPaymentForm(stripe) {
-            // Create card element
-            const elements = stripe.elements();
-            const cardElement = elements.create('card', {
-                style: {
-                    base: {
-                        fontSize: '16px',
-                        color: '#495057',
-                        '::placeholder': {
-                            color: '#6c757d',
-                        },
-                    },
-                    invalid: {
-                        color: '#dc3545',
-                    },
-                },
-            });
-            
-            cardElement.mount('#card-element');
-            
-            // Handle form submission
-            const form = document.getElementById('payment-form');
-            form.addEventListener('submit', async (event) => {
-                event.preventDefault();
-                await handlePaymentSubmission(stripe, cardElement);
-            });
-            
-            // Handle card element changes
-            cardElement.on('change', (event) => {
-                const displayError = document.getElementById('card-errors');
-                if (event.error) {
-                    displayError.textContent = event.error.message;
-                    displayError.style.display = 'block';
-                } else {
-                    displayError.style.display = 'none';
-                }
-            });
-        }
-        
-        async function handlePaymentSubmission(stripe, cardElement) {
-            const submitButton = document.getElementById('submit-payment');
-            const buttonText = submitButton.querySelector('.button-text');
-            const spinner = submitButton.querySelector('.loading-spinner');
-            
-            // Show loading state
-            submitButton.disabled = true;
-            buttonText.style.display = 'none';
-            spinner.style.display = 'inline-block';
-            
-            try {
-                // Get quiz data
-                const quizAnswers = JSON.parse(localStorage.getItem('strandly_quiz_answers') || '{}');
-                const email = quizAnswers.email || '';
-                
-                if (!email) {
-                    throw new Error('Email is required for payment');
-                }
-                
-                // Create payment method
-                const { error, paymentMethod } = await stripe.createPaymentMethod({
-                    type: 'card',
-                    card: cardElement,
-                    billing_details: {
-                        email: email,
-                    },
-                });
-                
-                if (error) {
-                    throw error;
-                }
-                
-                console.log('💳 Payment method created:', paymentMethod.id);
-                
-                // Process payment with backend
-                await processPaymentWithBackend(paymentMethod, quizAnswers);
-                
-            } catch (error) {
-                console.error('❌ Payment failed:', error);
-                showPaymentError(error.message);
-                
-                // Reset button state
-                submitButton.disabled = false;
-                buttonText.style.display = 'inline';
-                spinner.style.display = 'none';
-            }
-        }
-        
-        async function processPaymentWithBackend(paymentMethod, quizAnswers) {
-            try {
-                // Create payment with backend
-                const apiUrl = window.StrandlyConfig?.getApiUrl() || 'https://strandly-backend.onrender.com';
-                
-                const response = await fetch(`${apiUrl}/api/payment/process`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        paymentMethodId: paymentMethod.id,
-                        quizAnswers: quizAnswers,
-                        amount: 2900, // $29.00 in cents
-                        currency: 'usd',
-                    }),
-                });
-                
-                const result = await response.json();
-                
-                if (result.error) {
-                    throw new Error(result.error);
-                }
-                
-                console.log('✅ Payment successful');
-                
-                // Clear quiz data
-                localStorage.removeItem('strandly_quiz_answers');
-                localStorage.removeItem('strandly_quiz_completed');
-                
-                // Redirect to success
-                window.location.href = 'payment-success.html';
-                
-            } catch (error) {
-                console.error('❌ Backend payment processing failed:', error);
-                
-                // Fallback: show success anyway (for testing)
-                console.log('🧪 Using fallback success for testing');
-                window.location.href = 'payment-success.html';
-            }
-        }
-        
-        function showPaymentError(message) {
-            const errorDiv = document.getElementById('card-errors');
-            errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
-        }
+        window.addEventListener('unhandledrejection', (event) => {
+            console.error('Payment page promise rejection:', event.reason);
+        });
     </script>
 </body>
 </html>
