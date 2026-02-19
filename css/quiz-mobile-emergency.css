@@ -1,0 +1,303 @@
+/* EMERGENCY QUIZ MOBILE FIXES - REVENUE CRITICAL */
+/* Fixes mobile quiz conversion flow issues immediately */
+
+/* QUIZ MOBILE LAYOUT FIXES */
+@media screen and (max-width: 768px) {
+    
+    /* ========== QUIZ CONTAINER MOBILE FIXES ========== */
+    .quiz-container, #quiz-container {
+        padding: 0 15px !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        overflow-x: hidden !important;
+    }
+    
+    /* ========== QUIZ QUESTION MOBILE FIXES ========== */
+    .question-container, .quiz-question {
+        padding: 20px 15px !important;
+        margin: 10px 0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    
+    .question-text, .quiz-question h3, .quiz-question h2 {
+        font-size: 20px !important;
+        line-height: 1.4 !important;
+        margin-bottom: 25px !important;
+        text-align: center !important;
+        color: #333 !important;
+    }
+    
+    .question-subtext, .question-description {
+        font-size: 16px !important;
+        line-height: 1.5 !important;
+        color: #666 !important;
+        text-align: center !important;
+        margin-bottom: 20px !important;
+    }
+    
+    /* ========== QUIZ OPTIONS/ANSWERS MOBILE FIXES ========== */
+    .quiz-options, .option-group, .answer-options {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        width: 100% !important;
+        margin: 20px 0 !important;
+    }
+    
+    .quiz-option, .option-label, .answer-option {
+        padding: 20px 18px !important;
+        margin: 0 0 10px 0 !important;
+        font-size: 16px !important;
+        line-height: 1.4 !important;
+        border-radius: 12px !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+        background: white !important;
+        border: 2px solid #e9ecef !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        text-align: left !important;
+        display: block !important;
+        min-height: 48px !important; /* Touch target */
+    }
+    
+    .quiz-option:active, .option-label:active, .answer-option:active {
+        transform: scale(0.98) !important;
+        background: #f8f9fa !important;
+    }
+    
+    .quiz-option.selected, .option-label.selected, .answer-option.selected {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        border-color: #667eea !important;
+        transform: none !important;
+    }
+    
+    /* Hide radio buttons/checkboxes for cleaner mobile experience */
+    .quiz-option input[type="radio"],
+    .quiz-option input[type="checkbox"],
+    .option-label input[type="radio"],
+    .option-label input[type="checkbox"] {
+        display: none !important;
+    }
+    
+    /* ========== QUIZ NAVIGATION MOBILE FIXES ========== */
+    .quiz-navigation, .nav-buttons, .quiz-nav {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        background: white !important;
+        padding: 20px !important;
+        border-top: 1px solid #e9ecef !important;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1) !important;
+        z-index: 1000 !important;
+        display: flex !important;
+        gap: 10px !important;
+        justify-content: space-between !important;
+    }
+    
+    .quiz-nav-btn, .nav-btn, .next-btn, .prev-btn, .continue-btn {
+        flex: 1 !important;
+        padding: 16px 20px !important;
+        font-size: 16px !important;
+        border-radius: 10px !important;
+        border: none !important;
+        cursor: pointer !important;
+        min-height: 48px !important;
+        font-weight: 600 !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .next-btn, .continue-btn, .quiz-nav-btn.primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+    }
+    
+    .prev-btn, .quiz-nav-btn.secondary {
+        background: #f8f9fa !important;
+        color: #495057 !important;
+        border: 2px solid #e9ecef !important;
+    }
+    
+    /* Add bottom padding to quiz content to account for fixed navigation */
+    .quiz-main, .quiz-content, #quiz-content {
+        padding-bottom: 100px !important;
+        min-height: calc(100vh - 200px) !important;
+    }
+    
+    /* ========== QUIZ PROGRESS BAR MOBILE FIXES ========== */
+    .progress-container, .quiz-progress {
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 100 !important;
+        background: white !important;
+        padding: 15px 20px !important;
+        border-bottom: 1px solid #e9ecef !important;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
+    }
+    
+    .progress-bar, .quiz-progress-bar {
+        height: 8px !important;
+        border-radius: 4px !important;
+        background: #e9ecef !important;
+        margin: 10px 0 !important;
+        width: 100% !important;
+    }
+    
+    .progress-fill, .progress-bar-fill {
+        height: 100% !important;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        border-radius: 4px !important;
+        transition: width 0.5s ease !important;
+    }
+    
+    .question-counter, #question-counter {
+        font-size: 18px !important;
+        font-weight: bold !important;
+        color: #667eea !important;
+        text-align: center !important;
+    }
+    
+    /* ========== EMAIL UNLOCK SECTION MOBILE FIXES ========== */
+    .email-unlock-section, .email-capture {
+        margin: 20px -15px !important; /* Extend to screen edges */
+        border-radius: 0 !important;
+        padding: 30px 20px !important;
+    }
+    
+    .email-input-premium, .email-input {
+        width: 100% !important;
+        padding: 18px 20px !important;
+        font-size: 16px !important; /* Prevents zoom on iOS */
+        border-radius: 10px !important;
+        border: 2px solid #ddd !important;
+        margin-bottom: 15px !important;
+        box-sizing: border-box !important;
+    }
+    
+    .email-capture-form {
+        flex-direction: column !important;
+        gap: 15px !important;
+    }
+    
+    .unlock-analysis-btn, .email-submit-btn {
+        width: 100% !important;
+        padding: 18px 25px !important;
+        font-size: 18px !important;
+        border-radius: 12px !important;
+        min-height: 48px !important;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        border: none !important;
+        margin-top: 10px !important;
+    }
+    
+    /* ========== QUIZ RESULTS PREVIEW MOBILE FIXES ========== */
+    .analysis-preview, .preview-results-teaser {
+        margin: 20px 0 !important;
+        padding: 20px !important;
+        border-radius: 15px !important;
+    }
+    
+    .preview-results-teaser h3 {
+        font-size: 24px !important;
+        margin-bottom: 20px !important;
+        text-align: center !important;
+    }
+    
+    /* ========== QUIZ LOADING STATES MOBILE ========== */
+    .loading-state, .quiz-loading {
+        text-align: center !important;
+        padding: 40px 20px !important;
+        color: #666 !important;
+    }
+    
+    /* ========== TRUST SIGNALS MOBILE FIXES ========== */
+    .trust-signals, .quiz-trust-badges {
+        flex-direction: column !important;
+        gap: 10px !important;
+        text-align: center !important;
+        margin: 20px 0 !important;
+    }
+    
+    /* ========== QUIZ ERROR/SUCCESS STATES MOBILE ========== */
+    .error-message, .success-message {
+        margin: 15px -15px !important;
+        padding: 15px 20px !important;
+        border-radius: 10px !important;
+        text-align: center !important;
+    }
+    
+    .error-message {
+        background: #fff3cd !important;
+        color: #856404 !important;
+        border-left: 4px solid #ffc107 !important;
+    }
+    
+    .success-message {
+        background: #d4edda !important;
+        color: #155724 !important;
+        border-left: 4px solid #28a745 !important;
+    }
+}
+
+/* ========== VERY SMALL MOBILE SCREENS ========== */
+@media screen and (max-width: 480px) {
+    .question-text, .quiz-question h3, .quiz-question h2 {
+        font-size: 18px !important;
+    }
+    
+    .quiz-option, .option-label, .answer-option {
+        padding: 18px 15px !important;
+        font-size: 15px !important;
+    }
+    
+    .quiz-navigation, .nav-buttons, .quiz-nav {
+        padding: 15px !important;
+    }
+    
+    .quiz-nav-btn, .nav-btn {
+        padding: 14px 16px !important;
+        font-size: 15px !important;
+    }
+}
+
+/* ========== iOS SAFARI BOTTOM BAR FIX ========== */
+@supports (padding: max(0px)) {
+    .quiz-navigation, .nav-buttons, .quiz-nav {
+        padding-bottom: max(20px, env(safe-area-inset-bottom)) !important;
+    }
+    
+    .quiz-main, .quiz-content, #quiz-content {
+        padding-bottom: max(100px, calc(100px + env(safe-area-inset-bottom))) !important;
+    }
+}
+
+/* ========== ACCESSIBILITY IMPROVEMENTS ========== */
+@media (prefers-reduced-motion: reduce) {
+    .quiz-option, .option-label, .answer-option,
+    .quiz-nav-btn, .nav-btn, .progress-fill {
+        transition: none !important;
+    }
+}
+
+/* ========== TOUCH OPTIMIZATIONS ========== */
+.quiz-container {
+    touch-action: pan-y !important;
+}
+
+/* Remove hover effects on touch devices */
+@media (hover: none) and (pointer: coarse) {
+    .quiz-option:hover, .option-label:hover, .answer-option:hover {
+        background: white !important;
+        border-color: #e9ecef !important;
+    }
+    
+    .quiz-option.selected:hover, .option-label.selected:hover, .answer-option.selected:hover {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        border-color: #667eea !important;
+    }
+}

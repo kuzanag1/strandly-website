@@ -1,0 +1,476 @@
+/* SENIOR UX DIRECTOR - MOBILE ENHANCEMENT STYLES */
+/* Supports ux-director-mobile-optimization.js features */
+
+/* =================================== */
+/* VALUE STACK MOBILE DISPLAY */
+/* =================================== */
+
+.value-stack-mobile {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 25px 20px;
+    margin: 20px 0;
+    border-radius: 15px;
+    color: white;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.value-points-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.value-point-mobile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.value-point-mobile.completed {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.value-point-mobile.in-progress {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px dashed rgba(255, 255, 255, 0.3);
+}
+
+.value-icon-mobile {
+    font-size: 16px;
+    min-width: 20px;
+    text-align: center;
+}
+
+.value-text-mobile {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+/* =================================== */
+/* EMAIL CAPTURE MODAL STYLES */
+/* =================================== */
+
+.email-overlay-mobile {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: 20px;
+    backdrop-filter: blur(8px);
+    animation: fadeInOverlay 0.3s ease;
+}
+
+@keyframes fadeInOverlay {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.email-capture-modal {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUpModal 0.4s ease;
+    position: relative;
+}
+
+@keyframes slideUpModal {
+    from {
+        opacity: 0;
+        transform: translateY(50px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.email-modal-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.email-modal-subtitle {
+    font-size: 16px;
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 25px;
+}
+
+.email-capture-form-modal {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.email-input-modal {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.email-input-modal:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.email-submit-modal {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 48px;
+}
+
+.email-submit-modal:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.email-submit-modal:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.email-skip-option {
+    color: #666;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 10px;
+    text-decoration: underline;
+    transition: color 0.3s ease;
+}
+
+.email-skip-option:hover {
+    color: #333;
+}
+
+/* =================================== */
+/* MILESTONE CELEBRATIONS */
+/* =================================== */
+
+.milestone-celebration {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10001;
+    animation: celebrationFade 2s ease forwards;
+}
+
+@keyframes celebrationFade {
+    0% { opacity: 0; transform: scale(0.8); }
+    20% { opacity: 1; transform: scale(1); }
+    80% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.1); }
+}
+
+/* =================================== */
+/* ERROR RECOVERY UI */
+/* =================================== */
+
+.error-recovery-mobile {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    background: white;
+    border: 2px solid #dc3545;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    z-index: 9999;
+    box-shadow: 0 10px 30px rgba(220, 53, 69, 0.3);
+    animation: slideDownError 0.4s ease;
+}
+
+@keyframes slideDownError {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.error-icon {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.error-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #dc3545;
+    margin-bottom: 10px;
+}
+
+.error-message {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.error-action {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.error-action:hover {
+    background: #c82333;
+}
+
+.network-error-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #dc3545;
+    color: white;
+    padding: 12px;
+    text-align: center;
+    z-index: 10000;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* =================================== */
+/* TOUCH FEEDBACK ENHANCEMENTS */
+/* =================================== */
+
+.quiz-option, .option-label, .cta-button, .nav-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.quiz-option::after, .option-label::after, .cta-button::after, .nav-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease;
+    pointer-events: none;
+}
+
+.quiz-option:active::after, .option-label:active::after, 
+.cta-button:active::after, .nav-btn:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* =================================== */
+/* PROGRESS INDICATOR ENHANCEMENTS */
+/* =================================== */
+
+.progress-counter, #question-counter {
+    font-size: 16px;
+    font-weight: 600;
+    color: #667eea;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.progress-percentage {
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* =================================== */
+/* ACCESSIBILITY IMPROVEMENTS */
+/* =================================== */
+
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: #667eea;
+    color: white;
+    padding: 8px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+    z-index: 10000;
+    transition: top 0.3s ease;
+}
+
+.skip-link:focus {
+    top: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reduced-motion * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        transition-delay: 0ms !important;
+    }
+}
+
+/* Focus indicators for keyboard navigation */
+.quiz-option:focus, .option-label:focus, .cta-button:focus, .nav-btn:focus {
+    outline: 3px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* =================================== */
+/* RESPONSIVE BREAKPOINTS - CRITICAL */
+/* =================================== */
+
+/* Ultra mobile - 400px and below */
+@media screen and (max-width: 400px) {
+    .email-capture-modal {
+        padding: 20px;
+        margin: 10px;
+    }
+    
+    .email-modal-title {
+        font-size: 20px;
+    }
+    
+    .value-stack-mobile {
+        padding: 20px 15px;
+        margin: 15px 0;
+    }
+    
+    .value-text-mobile {
+        font-size: 13px;
+    }
+}
+
+/* Small mobile - 480px and below */
+@media screen and (max-width: 480px) {
+    .email-overlay-mobile {
+        padding: 15px;
+    }
+    
+    .error-recovery-mobile {
+        left: 15px;
+        right: 15px;
+        padding: 15px;
+    }
+    
+    .value-point-mobile {
+        padding: 10px;
+        gap: 10px;
+    }
+}
+
+/* Landscape mobile optimization */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    .email-capture-modal {
+        max-height: 90vh;
+        overflow-y: auto;
+        padding: 20px;
+    }
+    
+    .milestone-celebration .celebration-icon {
+        font-size: 40px;
+    }
+    
+    .milestone-celebration .celebration-text {
+        font-size: 24px;
+    }
+}
+
+/* =================================== */
+/* LOADING STATES & SKELETON SCREENS */
+/* =================================== */
+
+.loading-skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading-shimmer 1.5s infinite;
+    border-radius: 8px;
+}
+
+@keyframes loading-shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.quiz-option.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.quiz-option.loading::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: loading-sweep 1.5s infinite;
+}
+
+@keyframes loading-sweep {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .email-capture-modal {
+        border: 2px solid black;
+    }
+    
+    .value-point-mobile {
+        border: 1px solid white;
+    }
+    
+    .quiz-option, .option-label {
+        border: 2px solid #333;
+    }
+}
