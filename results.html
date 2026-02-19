@@ -11,7 +11,6 @@
     
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/auth.css">
     <link rel="stylesheet" href="css/loading.css">
     <link rel="stylesheet" href="css/results.css">
     <link rel="stylesheet" href="css/mobile-optimization.css">
@@ -30,15 +29,9 @@
                         <img src="images/strandly-logo.png" alt="Strandly" width="150" height="40">
                     </a>
                 </div>
-                <nav class="auth-nav">
-                    <div class="unauthenticated-only">
-                        <a href="login.html" class="btn btn-outline">Login</a>
-                        <a href="signup.html" class="btn btn-primary">Sign Up</a>
-                    </div>
-                    <div class="authenticated-only" style="display: none;">
-                        <span class="user-greeting">Hi, <span class="user-name">User</span>!</span>
-                        <button class="logout-btn btn btn-outline">Logout</button>
-                    </div>
+                <!-- Simplified navigation - no authentication needed -->
+                <nav class="simple-nav">
+                    <a href="index.html" class="btn btn-outline">← Back to Home</a>
                 </nav>
             </div>
         </div>
@@ -179,57 +172,32 @@
                 </div>
             </section>
 
-            <!-- Purchase Analysis (for non-authenticated users) -->
-            <section id="purchase-analysis" class="purchase-section unauthenticated-only">
+            <!-- Simple Purchase Section -->
+            <section id="purchase-analysis" class="purchase-section">
                 <div class="purchase-card">
                     <h2>Get Your Complete Analysis</h2>
-                    <p>Unlock detailed insights, personalized product recommendations, and a custom care routine.</p>
+                    <p>Pay $29 and get your detailed hair analysis delivered instantly to your email.</p>
                     
                     <div class="purchase-benefits">
                         <div class="benefit">✅ Detailed hair damage assessment</div>
                         <div class="benefit">✅ Custom product recommendations</div>
                         <div class="benefit">✅ Personalized care routine</div>
-                        <div class="benefit">✅ Progress tracking over time</div>
+                        <div class="benefit">✅ Results emailed instantly</div>
                     </div>
                     
                     <div class="purchase-action">
                         <div class="price">
                             <span class="price-amount">$29.00</span>
-                            <span class="price-note">One-time analysis</span>
+                            <span class="price-note">One-time payment • Instant email delivery</span>
                         </div>
                         <button class="btn btn-primary btn-large purchase-analysis-btn">
-                            Purchase Complete Analysis
+                            Pay $29 & Get Results
                         </button>
                     </div>
                 </div>
             </section>
 
-            <!-- Subscription Upgrade (for authenticated users) -->
-            <section id="subscription-upgrade" class="subscription-section authenticated-only" style="display: none;">
-                <div class="subscription-card">
-                    <h2>Track Your Hair Journey</h2>
-                    <p>Get ongoing support and updated recommendations as your hair changes.</p>
-                    
-                    <div class="subscription-plans">
-                        <div class="plan">
-                            <h3>Monthly Tracking</h3>
-                            <div class="plan-price">$9.99<span>/month</span></div>
-                            <button class="btn btn-outline upgrade-plan-btn" data-plan="monthly">
-                                Start Tracking
-                            </button>
-                        </div>
-                        <div class="plan plan-popular">
-                            <div class="popular-badge">Most Popular</div>
-                            <h3>Annual Tracking</h3>
-                            <div class="plan-price">$99.99<span>/year</span></div>
-                            <div class="plan-savings">Save 17%</div>
-                            <button class="btn btn-primary upgrade-plan-btn" data-plan="annual">
-                                Save & Start
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            <!-- Note: No subscriptions needed - simple one-time analysis model -->
 
             <!-- Actions -->
             <section class="results-actions">
@@ -278,10 +246,8 @@
         };
     </script>
 
-    <script src="js/api-service.js"></script>
-    <script src="js/auth-manager.js"></script>
     <script src="js/payment-integration.js"></script>
-    <script src="js/results-manager.js"></script>
+    <script src="js/simple-results-manager.js"></script>
 
     <!-- Analytics -->
     <script>
@@ -295,5 +261,33 @@
             });
         }
     </script>
+
+    <!-- Essential Legal Compliance Footer -->
+    <footer class="results-legal-footer" role="contentinfo" style="background: #f8f9fa; padding: 20px 0; border-top: 1px solid #e9ecef; margin-top: 40px;">
+        <div class="container" style="max-width: 1200px; margin: 0 auto; text-align: center;">
+            <div class="satisfaction-guarantee" style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <h4 style="color: #28a745; margin: 0 0 5px 0; font-size: 16px;">Not Satisfied? We've Got You Covered!</h4>
+                <p style="margin: 5px 0; color: #666; font-size: 14px;">30-Day Money-Back Guarantee • No Questions Asked</p>
+                <a href="refund.html" style="color: #28a745; text-decoration: none; font-weight: 500;">Learn About Our Refund Policy →</a>
+            </div>
+            <div class="legal-links" style="margin-bottom: 15px;">
+                <a href="privacy-policy.html" style="color: #666; text-decoration: none; margin: 0 15px; font-size: 14px;">Privacy Policy</a>
+                <span style="color: #ccc;">|</span>
+                <a href="terms-of-service.html" style="color: #666; text-decoration: none; margin: 0 15px; font-size: 14px;">Terms of Service</a>
+                <span style="color: #ccc;">|</span>
+                <a href="refund.html" style="color: #666; text-decoration: none; margin: 0 15px; font-size: 14px;">Refund Policy</a>
+                <span style="color: #ccc;">|</span>
+                <a href="contact.html" style="color: #666; text-decoration: none; margin: 0 15px; font-size: 14px;">Contact Support</a>
+            </div>
+            <div class="customer-support" style="margin-bottom: 10px; font-size: 13px; color: #666;">
+                <span>Questions about your results? </span>
+                <a href="contact.html" style="color: #667eea; text-decoration: none;">Contact our hair experts</a>
+            </div>
+            <div class="legal-notice" style="font-size: 12px; color: #888; line-height: 1.4;">
+                <p style="margin: 5px 0;">Your data is protected under GDPR. All recommendations are personalized to your specific hair profile.</p>
+                <p style="margin: 5px 0;">&copy; 2025 Strandly. All rights reserved. GDPR Compliant • SSL Secured</p>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

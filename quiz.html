@@ -357,8 +357,8 @@
                     <div class="process-step">
                         <div class="step-number">2</div>
                         <div class="step-content">
-                            <h4>AI Pattern Recognition</h4>
-                            <p>Our algorithm compares your profile to our database of 10,000+ hair types</p>
+                            <h4>Scientific Hair Assessment</h4>
+                            <p>Evidence-based evaluation using established hair science principles</p>
                         </div>
                     </div>
                     
@@ -397,33 +397,15 @@
                     </div>
                 </div>
 
-                <!-- Email Capture Section (shows after question 7) -->
-                <div id="email-capture-section" class="email-unlock-section" style="display: none;">
-                    <div class="preview-results-teaser">
-                        <h3>🧬 Your Hair Profile is Ready!</h3>
-                        <div class="analysis-preview">
-                            <div class="characteristic-hint">
-                                ✓ Hair Porosity: <strong id="detected-porosity">[DETECTED]</strong><br>
-                                ✓ Density Pattern: <strong id="detected-density">[ANALYZED]</strong><br>
-                                ✓ Damage Assessment: <strong id="damage-level">[COMPLETE]</strong><br>
-                                <div class="blur-overlay">
-                                    + Molecular structure analysis<br>
-                                    + Environmental damage mapping<br>
-                                    + Styling compatibility score<br>
-                                    + Product absorption rate<br>
-                                    + Custom ingredient recommendations
-                                </div>
-                            </div>
-                        </div>
-                        <p class="urgency-text">Enter your email to unlock your complete personalized analysis</p>
-                        <div class="email-capture-form">
-                            <input type="email" id="user-email" placeholder="your.email@example.com" class="email-input-premium" required>
-                            <button class="unlock-analysis-btn" onclick="unlockAnalysis()">Unlock My Analysis →</button>
-                        </div>
-                        <div class="trust-signals">
-                            <span>🔒 Never shared</span>
-                            <span>📧 Results in 2 minutes</span>
-                            <span>💰 Only pay for premium insights</span>
+                <!-- Quiz completion message (no email capture needed) -->
+                <div id="quiz-completion-message" class="completion-message" style="display: none;">
+                    <div style="text-align: center; padding: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px; margin: 30px 0;">
+                        <h3>🧬 Your Hair Analysis is Complete!</h3>
+                        <p>Click "Complete Analysis" to see your personalized results and recommendations.</p>
+                        <div style="margin-top: 20px;">
+                            <span>📊 Analysis complete</span> • 
+                            <span>💰 Pay $29 to get full results</span> • 
+                            <span>📧 Instant email delivery</span>
                         </div>
                     </div>
                 </div>
@@ -438,7 +420,7 @@
                                 <li>✓ General care tips</li>
                                 <li>✓ 3 product categories</li>
                             </ul>
-                            <span class="confidence-score">Accuracy: 75%</span>
+                            <span class="confidence-score">Assessment: Preliminary</span>
                         </div>
                         
                         <div class="analysis-tier enhanced highlighted">
@@ -450,7 +432,7 @@
                                 <li>✓ Seasonal routine adjustments</li>
                                 <li>✓ Styling damage prevention</li>
                             </ul>
-                            <span class="confidence-score">Accuracy: 94%</span>
+                            <span class="confidence-score">Assessment: Complete</span>
                         </div>
                     </div>
                     
@@ -586,7 +568,6 @@
 
         let currentQuestion = 0;
         let answers = {};
-        let emailCaptured = false;
         let enhancedMode = false;
 
         function startQuiz() {
@@ -644,12 +625,11 @@
                 document.getElementById('enhanced-analysis-offer').style.display = 'none';
             }
 
-            // Show email capture after question 7 (70% completion)
-            if (currentQuestion === 6 && !emailCaptured) {
-                updatePreviewResults();
-                document.getElementById('email-capture-section').style.display = 'block';
+            // Show completion message after question 8 (80% completion)
+            if (currentQuestion >= 7) {
+                document.getElementById('quiz-completion-message').style.display = 'block';
             } else {
-                document.getElementById('email-capture-section').style.display = 'none';
+                document.getElementById('quiz-completion-message').style.display = 'none';
             }
 
             // Update navigation buttons
@@ -691,73 +671,14 @@
             const isAnswered = currentAnswered !== undefined && 
                              (Array.isArray(currentAnswered) ? currentAnswered.length > 0 : true);
             
-            // For email capture screen, check if email is captured
-            if (currentQuestion === 6 && !emailCaptured) {
-                nextBtn.disabled = true;
-                nextBtn.textContent = 'Enter Email to Continue';
-            } else {
-                nextBtn.disabled = !isAnswered;
-                nextBtn.textContent = currentQuestion === 9 ? 'Complete Analysis' : 'Next';
-            }
+            // Simple navigation logic
+            nextBtn.disabled = !isAnswered;
+            nextBtn.textContent = currentQuestion === 9 ? 'Complete Analysis' : 'Next';
         }
 
-        function updatePreviewResults() {
-            // Generate preview based on answers so far
-            const porosityAnswer = answers[4]; // Question 4 about water behavior
-            const densityAnswer = answers[3];  // Question 3 about hair amount
-            const concernAnswer = answers[6];  // Question 6 about main concern
+        // Preview results function removed - not needed for simplified business model
 
-            let porosity = 'ANALYZING...';
-            let density = 'DETECTING...';
-            let damage = 'ASSESSING...';
-
-            if (porosityAnswer) {
-                porosity = porosityAnswer === 'repels_water' ? 'LOW POROSITY' : 
-                          porosityAnswer === 'absorbs_normally' ? 'NORMAL POROSITY' : 'HIGH POROSITY';
-            }
-
-            if (densityAnswer) {
-                density = densityAnswer === 'low_density' ? 'LOW DENSITY' : 
-                         densityAnswer === 'medium_density' ? 'MEDIUM DENSITY' : 'HIGH DENSITY';
-            }
-
-            if (concernAnswer) {
-                damage = concernAnswer === 'damage' ? 'HIGH DAMAGE DETECTED' : 
-                        concernAnswer === 'breakage' ? 'MODERATE DAMAGE' : 'MINIMAL DAMAGE';
-            }
-
-            document.getElementById('detected-porosity').textContent = porosity;
-            document.getElementById('detected-density').textContent = density;
-            document.getElementById('damage-level').textContent = damage;
-        }
-
-        function unlockAnalysis() {
-            const email = document.getElementById('user-email').value;
-            if (!email || !email.includes('@')) {
-                alert('Please enter a valid email address');
-                return;
-            }
-
-            // Store email
-            answers.email = email;
-            emailCaptured = true;
-            
-            // Hide email capture section
-            document.getElementById('email-capture-section').style.display = 'none';
-            
-            // Update navigation and continue
-            updateNavigationButtons();
-            
-            // Show success message briefly
-            const emailSection = document.getElementById('email-capture-section');
-            emailSection.innerHTML = '<div style="text-align: center; padding: 20px; color: #4CAF50;"><h3>✅ Analysis Unlocked!</h3><p>Continue with the final questions for maximum accuracy.</p></div>';
-            emailSection.style.display = 'block';
-            
-            setTimeout(() => {
-                emailSection.style.display = 'none';
-                nextQuestion();
-            }, 2000);
-        }
+        // Email capture removed - not needed for simplified business model
 
         function continueEnhanced() {
             enhancedMode = true;
@@ -796,12 +717,11 @@
             
             console.log('Quiz completed:', answers);
             
-            // Redirect to results processing
-            window.location.href = 'results.html?' + new URLSearchParams({
-                enhanced: enhancedMode,
-                email: answers.email || '',
-                quiz_data: JSON.stringify(answers)
-            });
+            // Store answers for results page
+            localStorage.setItem('strandly_quiz_answers', JSON.stringify(answers));
+            
+            // Simple redirect to results
+            window.location.href = 'results.html';
         }
 
         // Initialize quiz
@@ -842,5 +762,24 @@
             transform: translateY(-2px);
         }
     </style>
+
+    <!-- Legal Compliance Footer -->
+    <footer class="quiz-legal-footer" role="contentinfo" style="background: #f8f9fa; padding: 20px 0; border-top: 1px solid #e9ecef; margin-top: 40px;">
+        <div class="container" style="max-width: 1200px; margin: 0 auto; text-align: center;">
+            <div class="legal-links" style="margin-bottom: 15px;">
+                <a href="privacy-policy.html" style="color: #666; text-decoration: none; margin: 0 15px; font-size: 14px;">Privacy Policy</a>
+                <span style="color: #ccc;">|</span>
+                <a href="terms-of-service.html" style="color: #666; text-decoration: none; margin: 0 15px; font-size: 14px;">Terms of Service</a>
+                <span style="color: #ccc;">|</span>
+                <a href="refund.html" style="color: #666; text-decoration: none; margin: 0 15px; font-size: 14px;">Refund Policy</a>
+                <span style="color: #ccc;">|</span>
+                <a href="contact.html" style="color: #666; text-decoration: none; margin: 0 15px; font-size: 14px;">Contact</a>
+            </div>
+            <div class="legal-notice" style="font-size: 12px; color: #888; line-height: 1.4;">
+                <p style="margin: 5px 0;">By continuing, you agree to our Terms of Service and Privacy Policy.</p>
+                <p style="margin: 5px 0;">&copy; 2025 Strandly. All rights reserved. GDPR Compliant.</p>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
