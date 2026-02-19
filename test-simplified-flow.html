@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simplified Flow Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-result { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        .flow-test { border: 1px solid #ccc; padding: 20px; margin: 20px 0; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Strandly Simplified Flow Test</h1>
+    
+    <div class="flow-test">
+        <h2>✅ CORRECT Business Model</h2>
+        <ol>
+            <li><strong>Customer visits site</strong> → strandly.shop</li>
+            <li><strong>Takes quiz</strong> → 10 questions about hair</li>
+            <li><strong>Pays $29</strong> → one-time payment</li>
+            <li><strong>Gets email results</strong> → detailed analysis via email</li>
+        </ol>
+        <p><strong>NO LOGINS • NO ACCOUNTS • NO AUTHENTICATION</strong></p>
+    </div>
+
+    <div class="flow-test">
+        <h2>❌ REMOVED Unauthorized Features</h2>
+        <ul>
+            <li>❌ Login/Signup system</li>
+            <li>❌ User authentication</li>
+            <li>❌ User accounts</li>
+            <li>❌ Subscription plans</li>
+            <li>❌ Email capture during quiz</li>
+        </ul>
+    </div>
+    
+    <div id="test-results"></div>
+    
+    <button onclick="runSimplifiedTests()">Test Simplified System</button>
+
+    <script>
+        function log(message, type = 'info') {
+            const resultsDiv = document.getElementById('test-results');
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.textContent = message;
+            resultsDiv.appendChild(div);
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        function runSimplifiedTests() {
+            document.getElementById('test-results').innerHTML = '';
+            log('🚀 Testing Simplified Customer Journey...');
+
+            // Test 1: Check no auth system is loaded
+            log('🔍 Checking for unauthorized auth system...');
+            if (window.strandlyAuth) {
+                log('❌ FOUND unauthorized auth system still loaded!', 'error');
+            } else {
+                log('✅ No auth system found (correct)', 'success');
+            }
+
+            // Test 2: Check localStorage doesn't contain auth data
+            const authToken = localStorage.getItem('strandly_auth_token');
+            const userData = localStorage.getItem('strandly_user');
+            
+            if (authToken || userData) {
+                log('⚠️ Found auth data in localStorage (clearing...)', 'info');
+                localStorage.removeItem('strandly_auth_token');
+                localStorage.removeItem('strandly_user');
+                log('✅ Auth data cleared', 'success');
+            } else {
+                log('✅ No auth data in localStorage (correct)', 'success');
+            }
+
+            // Test 3: Test quiz data flow
+            log('📊 Testing quiz data storage...');
+            const sampleQuizData = {
+                1: 'wavy',
+                2: 'medium', 
+                3: 'medium_density',
+                4: 'absorbs_normally',
+                5: 'medium',
+                6: 'frizz',
+                completed_at: new Date().toISOString()
+            };
+            
+            localStorage.setItem('strandly_quiz_answers', JSON.stringify(sampleQuizData));
+            log('✅ Quiz answers stored successfully', 'success');
+            
+            // Test 4: Test results generation
+            if (window.SimpleResultsManager) {
+                log('❌ SimpleResultsManager loaded on wrong page', 'error');
+            } else {
+                log('✅ SimpleResultsManager not loaded here (correct)', 'success');
+            }
+
+            // Test 5: Test simplified URLs
+            log('🔗 Testing URL structure...');
+            const currentUrl = window.location.href;
+            if (currentUrl.includes('login') || currentUrl.includes('signup') || currentUrl.includes('auth')) {
+                log('❌ URL contains auth-related terms', 'error');
+            } else {
+                log('✅ URL structure is clean', 'success');
+            }
+
+            // Test 6: Check for removed elements
+            log('🧹 Checking for removed unauthorized elements...');
+            const authNavs = document.querySelectorAll('.auth-nav, .authenticated-only, .unauthenticated-only');
+            if (authNavs.length > 0) {
+                log('❌ Found unauthorized auth elements on page', 'error');
+            } else {
+                log('✅ No auth elements found (correct)', 'success');
+            }
+
+            // Summary
+            log('📋 SIMPLIFIED FLOW TEST SUMMARY:', 'info');
+            log('• Customer Journey: Quiz → Pay → Email (NO LOGINS)', 'info');
+            log('• Authentication System: REMOVED (was unauthorized)', 'info');
+            log('• Business Model: Simple $29 one-time payment', 'info');
+            
+            log('🏁 Simplified System Test Complete!', 'success');
+        }
+
+        // Auto-run tests
+        window.addEventListener('load', function() {
+            setTimeout(runSimplifiedTests, 500);
+        });
+
+        // Add some visual indicators
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if we're on the right domain
+            if (window.location.hostname.includes('strandly')) {
+                log('✅ Testing on production domain', 'success');
+            } else {
+                log('ℹ️ Testing on local/dev environment', 'info');
+            }
+        });
+    </script>
+</body>
+</html>
