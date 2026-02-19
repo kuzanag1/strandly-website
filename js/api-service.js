@@ -310,6 +310,181 @@ class StrandlyApiService {
             this.showError('Unable to proceed to payment. Please retake the quiz.');
         }
     }
+
+    /**
+     * Check if user is authenticated
+     */
+    isAuthenticated() {
+        const token = localStorage.getItem('strandly_auth_token');
+        const user = localStorage.getItem('strandly_user');
+        
+        if (!token || !user) {
+            return false;
+        }
+
+        try {
+            // Basic token validation - in production, verify with backend
+            const userData = JSON.parse(user);
+            const now = Date.now();
+            
+            // Check if user data has expiration and if it's still valid
+            if (userData.expiresAt && now > userData.expiresAt) {
+                this.logout();
+                return false;
+            }
+
+            return true;
+        } catch (error) {
+            console.error('Error checking auth state:', error);
+            this.logout();
+            return false;
+        }
+    }
+
+    /**
+     * Get current authenticated user
+     */
+    getCurrentUser() {
+        if (!this.isAuthenticated()) {
+            return null;
+        }
+
+        try {
+            const userData = localStorage.getItem('strandly_user');
+            return JSON.parse(userData);
+        } catch (error) {
+            console.error('Error getting current user:', error);
+            return null;
+        }
+    }
+
+    /**
+     * Register new user
+     */
+    async register(userData) {
+        console.log('📝 Registering new user');
+        
+        try {
+            const response = await this.apiRequest('/api/auth/register', {
+                method: 'POST',
+                body: JSON.stringify(userData)
+            });
+
+            // Store authentication data
+            this.storeAuthData(response);
+            
+            return response;
+        } catch (error) {
+            console.error('Registration failed:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Login user
+     */
+    async login(email, password) {
+        console.log('🔐 Logging in user');
+        
+        try {
+            const response = await this.apiRequest('/api/auth/login', {
+                method: 'POST',
+                body: JSON.stringify({ email, password })
+            });
+
+            // Store authentication data
+            this.storeAuthData(response);
+            
+            return response;
+        } catch (error) {
+            console.error('Login failed:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Logout user
+     */
+    logout() {
+        console.log('👋 Logging out user');
+        
+        // Clear stored authentication data
+        localStorage.removeItem('strandly_auth_token');
+        localStorage.removeItem('strandly_user');
+        
+        // Clear any quiz data
+        this.clearQuizProgress();
+    }
+
+    /**
+     * Store authentication data
+     */
+    storeAuthData(authResponse) {
+        const { token, user } = authResponse;
+        
+        if (token) {
+            localStorage.setItem('strandly_auth_token', token);
+        }
+        
+        if (user) {
+            // Add expiration timestamp (24 hours from now)
+            const userWithExpiry = {
+                ...user,
+                expiresAt: Date.now() + (24 * 60 * 60 * 1000)
+            };
+            localStorage.setItem('strandly_user', JSON.stringify(userWithExpiry));
+        }
+    }
+
+    /**
+     * Get quiz results for authenticated user
+     */
+    async getQuizResult(userId) {
+        console.log('📊 Fetching quiz results for user');
+        
+        try {
+            const response = await this.apiRequest(`/api/results/${userId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('strandly_auth_token')}`
+                }
+            });
+
+            return response;
+        } catch (error) {
+            console.error('Failed to fetch quiz results:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Handle API errors consistently
+     */
+    handleError(error) {
+        if (error instanceof ApiError) {
+            return {
+                status: error.status,
+                message: error.message,
+                details: error.details
+            };
+        }
+
+        // Handle network errors
+        if (!navigator.onLine) {
+            return {
+                status: 0,
+                message: 'You appear to be offline. Please check your internet connection.',
+                details: 'network_offline'
+            };
+        }
+
+        // Default error handling
+        return {
+            status: error.status || 500,
+            message: error.message || 'An unexpected error occurred. Please try again.',
+            details: error.details || 'unknown_error'
+        };
+    }
 }
 
 /**
